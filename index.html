@@ -4,7 +4,7 @@
 		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, viewport-fit=cover">
-		<title>Bibbits – Tranche verticale combat 3D · v49d558f</title>
+		<title>Bibbits – Tranche verticale combat 3D · v76075fb</title>
 		<style>
 html, body, #canvas {
 	margin: 0;
@@ -118,10 +118,63 @@ window.bibbitsSafe = function () {
 	return JSON.stringify({l: parseFloat(s.paddingLeft) || 0, r: parseFloat(s.paddingRight) || 0, t: parseFloat(s.paddingTop) || 0, b: parseFloat(s.paddingBottom) || 0, w: window.innerWidth, h: window.innerHeight});
 };
 		</script>
-		<script>window.bibbitsBuild = "v49d558f";</script>
-		<script src="index-v49d558f.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index-v49d558f","experimentalVK":false,"fileSizes":{"index-v49d558f.pck":13966092,"index-v49d558f.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+// Bibbits : audio web.
+// 1) iOS Safari / Chrome : l'AudioContext démarre « suspendu » ; on le relance (et on joue un tampon muet)
+//    à CHAQUE geste (touchend/pointerup/clic/touche) tant qu'il n'est pas « running » — y compris après
+//    une interruption iOS (appel, passage en arrière-plan).
+// 2) navigator.audioSession (Safari ≥ 16.4) : « playback » → le son joue même interrupteur silencieux activé.
+// 3) Boucles musicales (> 30 s) : bouclage natif Web Audio, sans couture.
+// 4) Horloge musicale : on note le départ (horloge AudioContext) de la boucle musicale (> 30 s) ;
+//    window.bibbitsMusicTime() → position (s) lue par le jeu pour caler le Chant en direct sur les temps.
+(function () {
+	const AC = window.AudioContext || window.webkitAudioContext;
+	if (!AC) return;
+	const ctxs = [];
+	function Hooked(opts) { const c = opts === undefined ? new AC() : new AC(opts); ctxs.push(c); return c; }
+	Hooked.prototype = AC.prototype;
+	window.AudioContext = Hooked;
+	if (window.webkitAudioContext) window.webkitAudioContext = Hooked;
+	try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+	function unlock() {
+		for (const c of ctxs) {
+			if (c.state === 'running') continue;
+			try { c.resume(); } catch (e) {}
+			try {
+				const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource();
+				s.buffer = b; s.connect(c.destination); s.start(0);
+			} catch (e) {}
+		}
+	}
+	for (const ev of ['touchend', 'pointerup', 'mouseup', 'click', 'keydown', 'touchstart', 'pointerdown'])
+		window.addEventListener(ev, unlock, {capture: true, passive: true});
+	document.addEventListener('visibilitychange', function () { if (!document.hidden) unlock(); });
+	window.bibbitsAudioState = function () { return ctxs.map(c => c.state).join(',') || 'none'; };
+	let mus = null;
+	const start0 = AudioBufferSourceNode.prototype.start;
+	AudioBufferSourceNode.prototype.start = function (when, offset) {
+		try {
+			if (this.buffer && this.buffer.duration > 30) {
+				// boucle native sans couture (Godot relance sinon la source sur « ended » → petit trou audible).
+				// Sûr : Godot retire son écouteur « ended » avant stop(), et ignore « ended » en pause.
+				this.loop = true;
+				mus = {ctx: this.context, t: Math.max(when || 0, this.context.currentTime), off: offset || 0, len: this.buffer.duration, node: this};
+				this.addEventListener('ended', () => { if (mus && mus.node === this) mus = null; });
+			}
+		} catch (e) {}
+		return start0.apply(this, arguments);
+	};
+	window.bibbitsMusicTime = function () {
+		if (!mus || mus.ctx.state !== 'running') return -1;   // audio pas encore débloqué : pas d'horloge
+		const t = mus.ctx.currentTime - mus.t + mus.off;
+		return ((t % mus.len) + mus.len) % mus.len;
+	};
+})();
+		</script>
+		<script>window.bibbitsBuild = "v76075fb";</script>
+		<script src="index-v76075fb.js"></script>
+		<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index-v76075fb","experimentalVK":false,"fileSizes":{"index-v76075fb.pck":15520728,"index-v76075fb.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
