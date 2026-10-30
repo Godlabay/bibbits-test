@@ -1,0 +1,39 @@
+<!doctype html><html lang="fr-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bibbits — Duel (prototype)</title><style>
+body{font-family:sans-serif;background:#1d1b26;color:#eee;margin:0;padding:8px}
+h1{font-size:18px;margin:4px 0}.row{display:flex;gap:10px;flex-wrap:wrap}
+.side{background:#2b2838;border-radius:8px;padding:8px;flex:1;min-width:300px}
+.bib{display:inline-block;width:140px;margin:4px;vertical-align:top;text-align:center;font-size:12px}
+.bib img{width:120px;height:120px;object-fit:cover;border-radius:8px;border:3px solid #555}.bib.ko img{filter:grayscale(1);opacity:.5}
+.bar{height:8px;background:#444;border-radius:4px;overflow:hidden;margin:2px 0}.bar i{display:block;height:100%}
+.card{display:inline-block;width:110px;min-height:120px;margin:3px;padding:4px;border-radius:6px;background:#3a3550;font-size:11px;vertical-align:top;border:2px solid #666;cursor:default}
+.card img{width:100%;height:50px;object-fit:cover;border-radius:4px}.card b{display:block;font-size:12px}
+.Feu{border-color:#e5582b}.Mauve{border-color:#a45be0}.Eau{border-color:#3a9be0}.Or{border-color:#e0c03a}.Fané{border-color:#6a8a3a;background:#2a3320}
+.pick{cursor:pointer}.pick.sel{outline:3px solid #fff}.slot{display:inline-block;width:22px;min-height:120px;margin:3px 0;background:#555;border-radius:4px;cursor:pointer;vertical-align:top}
+.slot:hover{background:#9f9}#log{height:200px;overflow:auto;background:#111;padding:6px;font-size:12px;border-radius:6px;white-space:pre-wrap}
+button{padding:6px 12px;margin:3px;font-size:14px}.ult{box-shadow:0 0 8px gold}
+@media (orientation:portrait){#warn{display:block!important}}
+</style></head><body>
+<div id="warn" style="display:none;background:#a33;padding:4px">Tourne ton appareil en mode paysage 🙂</div>
+<h1>Bibbits — Duel de cartes (prototype)</h1><div id="app"></div>
+<script src="engine.js"></script><script>
+const D=Duel,K=Object.keys(D.BIBBITS);let g,choice=[],offer=null,sel=null,useFane=false,phase='team';
+const $=s=>document.getElementById(s),app=$('app');
+function bar(v,m,c){return `<div class="bar"><i style="width:${100*v/m}%;background:${c}"></i></div>`}
+function card(c,S,cls='',attr=''){const t=c.fane?null:S.team[c.b];return `<div class="card ${c.el} ${cls} ${c.ultime?'ult':''}" ${attr}>${t?`<img src="${t.img}">`:''}<b>${c.nom}</b>${t?t.nom+' · ':''}${c.el}<br>${D.fxText(c.fx)}</div>`}
+function teamPick(){phase='team';app.innerHTML=`<p>Choisis 2 Bibbits (doublon permis) :</p>`+K.map(k=>{const b=D.BIBBITS[k];return `<div class="bib" style="cursor:pointer" onclick="pickT('${k}')"><img src="${b.img}"><br><b>${b.nom}</b><br>${b.el} — ${b.role}<br>${b.hp} PV</div>`}).join('')+`<p>Choisis : ${choice.map(k=>D.BIBBITS[k].nom).join(', ')||'—'}</p>`}
+function pickT(k){choice.push(k);if(choice.length<2)return teamPick();const ai=[K[Math.random()*3|0],K[Math.random()*3|0]];g=D.newGame(choice,ai);choice=[];g.log.push('L\'IA joue avec '+ai.map(k=>D.BIBBITS[k].nom).join(' et ')+'.');phase='play';render()}
+function sideHTML(s){const S=g.sides[s];return `<div class="side"><b>${s?'IA':'Toi'}</b> — Fané dispo : ${S.fane} · Réserve : ${S.reserve.length}<br>`+S.team.map(t=>`<div class="bib ${t.hp<=0?'ko':''}"><img src="${t.img}"><br><b>${t.nom}</b> ${t.hp}/${t.max} PV${bar(t.hp,t.max,'#4c4')}Éveil ${t.eveil}/${D.EVEIL_MAX}${bar(t.eveil,D.EVEIL_MAX,'gold')}Bloc ${t.block} · Puiss. ${t.power}</div>`).join('')+`<div>Dernière carte : ${S.played?card(S.played,S):'—'}</div></div>`}
+function render(){const P=g.sides[0];let h=`<div class="row">${sideHTML(0)}${sideHTML(1)}</div>`;
+ if(g.over){h+=`<h2>${g.winner==='nul'?'Match nul':g.winner===0?'Victoire !':'Défaite'}</h2><button onclick="restart()">Recommencer</button>`}
+ else if(offer){h+=`<div class="side"><b>1. Choisis une carte</b> (les autres vont sous la réserve) :<br>`+(offer.length?offer.map((c,i)=>card(c,P,'pick'+(sel===i?' sel':''),`onclick="sel=${i};render()"`)).join(''):'<i>Réserve vide</i>')+
+  `<br><label><input type="checkbox" ${useFane?'checked':''} ${P.fane?'':'disabled'} onchange="useFane=this.checked"> Glisser ma carte Fané dans le paquet de l'IA (1 fois/partie)</label>`+
+  `<br><b>2. Clique une fente verte</b> pour insérer dans ton paquet de combat (ordre de gauche = prochaine carte) :<br>`+
+  P.combat.map((c,i)=>`<span class="slot" onclick="place(${i})"></span>`+card(c,P)).join('')+`<span class="slot" onclick="place(${P.combat.length})"></span>`+(offer.length?'':`<br><button onclick="place(0)">Continuer</button>`)+`</div>`}
+ else h+=`<div class="side">Ton paquet de combat : ${P.combat.map(c=>card(c,P)).join('')}<br><button onclick="next()">Retourner les cartes ▶</button></div>`;
+ h+=`<div id="log">${g.log.join('\n')}</div><button onclick="restart()">Recommencer</button>`;app.innerHTML=h;$('log').scrollTop=1e9}
+function next(){D.playRound(g);if(!g.over){offer=D.draw3(g,0);sel=offer.length?0:null;useFane=false}render()}
+function place(pos){if(offer.length&&sel===null)return;D.commit(g,0,offer,sel||0,pos,useFane);const o=D.draw3(g,1),a=D.aiChoose(g,1,o);D.commit(g,1,o,a.pick,a.pos,a.fane);offer=null;render()}
+function restart(){offer=null;choice=[];teamPick()}
+teamPick();
+</script></body></html>
