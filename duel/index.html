@@ -172,6 +172,7 @@ async function next(){if(busy||g.over)return;busy=true;$('act').innerHTML='';con
   else if(e.t==='heal'){cardRise(cards[e.s]);healGlow(u);float(u,'+'+e.n,'#7dff7a');burst(u,'#7dff7a',12);setHP(e.s,e.i,e.hp);await wait(500)}
   else if(e.t==='lunge'){lastEl=e.el;await attack(cards[e.s],U(e.o,e.ti));}
   else if(e.t==='dmg'){impact(u,lastEl,e.n);u.classList.remove('hit');void u.offsetWidth;u.classList.add('hit');float(u,e.n?'-'+e.n:'BLOQUÉ',e.n?'#ff4a4a':'#8ad0ff');const lastL=[...E].reverse().find(x=>x.t==='lunge'&&E.indexOf(x)<E.indexOf(e));burst(u,lastL?HEX[lastL.el]:'#ff4a4a',e.n*3+6);setHP(e.s,e.i,e.hp);setEv(e.s,e.i,e.eveil);await wait(380)}
+  else if(e.t==='brume'){banner('BRUME DU FANÉ','#7fbf3a');await wait(800)}
   else if(e.t==='ult'){await wait(300);const t=g.sides[e.s].team[e.i],S=$('splash');S.querySelector('img').src=t.img;S.querySelector('div').textContent='ÉVEIL ! '+e.nom.replace('Ultime : ','');S.classList.remove('on');void S.offsetWidth;S.classList.add('on');await wait(1650);S.classList.remove('on')}}
  await wait(500);cards.forEach(el=>{el.style.opacity=0;el.style.transform='rotateY(180deg) scale(.6)'});setTimeout(()=>cards.forEach(el=>el.remove()),500);setActive(null);sync();
  if(g.over){await wait(600);const w=g.winner,h=$('end').querySelector('h1');h.textContent=w==='nul'?'MATCH NUL':w===0?'VICTOIRE !':'DÉFAITE…';h.style.color=w===0?'#ffd23a':w==='nul'?'#ddd':'#ff4a4a';h.style.textShadow=`0 0 30px ${h.style.color},0 6px 0 #000`;$('end').classList.add('on');busy=false;return}

@@ -1,19 +1,19 @@
 // Bibbits Duel — moteur (navigateur + node)
 (function(root){
 const BIBBITS={
- atrefeu:{nom:'Âtrefeu',el:'Feu',hp:22,img:'img/atrefeu.jpg',role:'Tank / marteau',
-  cartes:[['Coup de marteau','Feu',{dmg:3},1],['Coup de marteau','Feu',{dmg:3},1],['Enclume levée','Feu',{block:4},1],['Forge ardente','Feu',{power:3,block:1},2],['Braises','Feu',{direct:3},2],['Choc sismique','Feu',{dmg:5,block:3},3],['Peau de lave','Feu',{block:5,heal:3},3],['Marteau titan','Feu',{dmg:10},5]],
+ atrefeu:{nom:'Âtrefeu',el:'Feu',hp:48,img:'img/atrefeu.jpg',role:'Tank / marteau',
+  cartes:[['Coup de marteau','Feu',{dmg:3},1],['Coup de marteau','Feu',{dmg:3},1],['Enclume levée','Feu',{block:5},1],['Forge ardente','Feu',{power:3,block:1},2],['Braises','Feu',{direct:3},2],['Choc sismique','Feu',{dmg:5,block:3},3],['Peau de lave','Feu',{block:5,heal:3},3],['Marteau titan','Feu',{dmg:8,block:3},5]],
   ult:['Ultime : Marteau-volcan','Feu',{dmg:10,block:5}]},
- ninnelune:{nom:'Ninnelune',el:'Mauve',hp:15,img:'img/ninnelune.jpg',role:'DPS rapide / lames',
-  cartes:[['Lame lunaire','Mauve',{dmg:3},1],['Lame lunaire','Mauve',{dmg:3},1],['Pas d\'ombre','Mauve',{block:3,power:2},2],['Aiguise-lames','Mauve',{power:3,dmg:1},2],['Double entaille','Mauve',{dmg:3,hits:2},3],['Dague perfide','Mauve',{direct:5},3],['Croissant fendu','Mauve',{dmg:7},4],['Éclipse tranchante','Mauve',{dmg:4,hits:3},5]],
+ ninnelune:{nom:'Ninnelune',el:'Mauve',hp:32,img:'img/ninnelune.jpg',role:'DPS rapide / lames',
+  cartes:[['Lame lunaire','Mauve',{dmg:3},1],['Esquive lunaire','Mauve',{block:4,heal:1},1],['Pas d\'ombre','Mauve',{block:3,power:2},2],['Aiguise-lames','Mauve',{power:3,dmg:1},2],['Double entaille','Mauve',{dmg:3,hits:2},3],['Dague perfide','Mauve',{direct:5},3],['Croissant fendu','Mauve',{dmg:6},4],['Éclipse tranchante','Mauve',{dmg:3,hits:3,block:2},5]],
   ult:['Ultime : Nuit des mille lames','Mauve',{dmg:3,hits:4}]},
- lamecume:{nom:'Lamécume',el:'Eau',hp:18,img:'img/lamecume.jpg',role:'Soigneuse',
-  cartes:[['Onde apaisante','Or',{heal:3},1],['Bulle protectrice','Eau',{block:4},1],['Vague','Eau',{dmg:3},1],['Bénédiction dorée','Or',{heal:3,power:2},2],['Jet d\'écume','Eau',{direct:3},2],['Marée montante','Eau',{dmg:4,heal:3},3],['Grand geyser','Eau',{dmg:7,direct:1},4],['Source sacrée','Or',{healAll:5,block:3,dmg:2},5]],
+ lamecume:{nom:'Lamécume',el:'Eau',hp:38,img:'img/lamecume.jpg',role:'Soigneuse',
+  cartes:[['Onde apaisante','Or',{heal:4},1],['Bulle protectrice','Eau',{block:5,heal:1},1],['Vague','Eau',{dmg:3},1],['Bénédiction dorée','Or',{heal:3,power:2},2],['Jet d\'écume','Eau',{direct:3},2],['Marée montante','Eau',{dmg:4,heal:3},3],['Grand geyser','Eau',{dmg:5,heal:3},4],['Source sacrée','Or',{healAll:5,block:3,dmg:2},5]],
   ult:['Ultime : Grande marée dorée','Or',{healAll:6,dmg:5}]}
 };
 // combos : élément précédent -> élément courant
 const COMBOS=[['Eau','Feu','Vapeur',{dmg:2}],['Eau','Mauve','Brume',{dmg:2}],['Feu','Mauve','Braise vive',{direct:1}],['Mauve','Eau','Ressac',{heal:2}],['Or','Feu','Éclat sacré',{block:2}],['Or','Mauve','Éclat sacré',{block:2}],['Feu','Or','Flamme pure',{heal:1,block:1}]];
-let EVEIL_MAX=8, MAX_ROUNDS=40; const MANA0=2,MANA_CAP=8;
+let EVEIL_MAX=12, MAX_ROUNDS=60, FATIGUE=18; const MANA0=2,MANA_CAP=8;
 function shuffle(a,rng){for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 let uid=0;
 function mk(b,c,extra){return Object.assign({id:++uid,b,nom:c[0],el:c[1],fx:c[2],cout:c[3]||0},extra||{});}
@@ -42,11 +42,12 @@ function playRound(g){if(g.over)return;g.round++;g.log.push('— Manche '+g.roun
   if(fx.heal){const t=lowest(T);t.hp=Math.min(t.max,t.hp+fx.heal);ev(g,{t:'heal',s,i:T.indexOf(t),n:fx.heal,hp:t.hp});g.log.push('  '+t.nom+' récupère '+fx.heal+' PV');}
   if(fx.healAll)T.forEach(t=>{if(t.hp>0)t.hp=Math.min(t.max,t.hp+fx.healAll);ev(g,{t:'heal',s,i:T.indexOf(t),n:fx.healAll,hp:t.hp});});});
  // phase 2 : attaques (cible : Bibbit adverse actif)
- const ord=act.slice().sort((x,y)=>(x.c.cout||0)-(y.c.cout||0));const first=(ord[0].c.cout||0)<(ord[1].c.cout||0);if(first){g.log.push('  ⚡ Initiative : la carte la moins chère frappe en premier.');}
+ const tie=g.round%2?0:1;const ord=act.slice().sort((x,y)=>((x.c.cout||0)-(y.c.cout||0))||((x.s===tie)?-1:1));const first=true;g.log.push((ord[0].c.cout||0)<(ord[1].c.cout||0)?'  ⚡ Initiative : la carte la moins chère frappe en premier.':'  ⚡ Initiative (égalité) : '+(tie===0?'toi':'l\'IA')+' frappe en premier cette manche.');
  ord.forEach(({s,c,fx,who},k)=>{if(first&&k===1&&g.sides[s].team.some(t=>t.hp<=0)){g.log.push('  '+who.nom+' est trop lent…');return;}const o=1-s,tgt=act[o].who;
   if(c.fane){const d=hurt(g,s,who,c.fx.fane,true);g.log.push('  La corruption Fané blesse '+who.nom+' ('+d+')');return;}
   if(fx.dmg||fx.direct)ev(g,{t:'lunge',s,i:g.sides[s].team.indexOf(who),o,ti:g.sides[o].team.indexOf(tgt),el:c.el});if(fx.dmg){const hits=fx.hits||1;let tot=0;const base=fx.dmg+who.power;for(let i=0;i<hits;i++)tot+=hurt(g,o,tgt,base);g.log.push('  '+who.nom+' inflige '+tot+' à '+tgt.nom+(who.power?' (puissance +'+who.power+')':''));who.power=0;}
   if(fx.direct){const d=hurt(g,o,tgt,fx.direct,true);g.log.push('  '+d+' dégâts directs à '+tgt.nom);}});
+ if(g.round>=FATIGUE){const n=Math.ceil((g.round-FATIGUE+1)/2);g.log.push('  🌫 La Brume du Fané s\'épaissit : '+n+' dégât(s) aux Bibbits actifs.');ev(g,{t:'brume',n});for(const {s,who} of ord){if(g.sides.some(S=>S.team.some(t=>t.hp<=0)))break;const T=g.sides[s].team;hurt(g,s,who.hp>0?who:lowest(T),n,true);}}
  // fin de manche : la carte retourne sous le paquet (sauf Fané)
  act.forEach(({s,c})=>{if(!c.fane)g.sides[s].combat.push(c);});
  g.sides.forEach(S=>S.team.forEach(t=>t.block=Math.floor(t.block/2)));
