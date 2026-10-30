@@ -25,26 +25,26 @@ function newGame(teamA,teamB,rng){rng=rng||Math.random;
  return{sides,round:0,over:false,winner:null,log:[],rng};}
 function fxText(f){const p=[];if(f.dmg)p.push((f.hits?f.hits+'× ':'')+f.dmg+' dégâts');if(f.direct)p.push(f.direct+' dégâts directs');if(f.block)p.push('+'+f.block+' bloc');if(f.heal)p.push('soin '+f.heal);if(f.healAll)p.push('soin équipe '+f.healAll);if(f.power)p.push('+'+f.power+' puissance');if(f.fane)p.push('Fané : '+f.fane+' dégâts à son propre camp');return p.join(', ');}
 function lowest(team){const a=team.filter(x=>x.hp>0);return a.sort((x,y)=>x.hp/x.max-y.hp/y.max)[0]||team[0];}
-function hurt(g,s,target,n,pierce){if(n<=0)return 0;let d=n;if(!pierce){const ab=Math.min(target.block,d);target.block-=ab;d-=ab;}target.hp=Math.max(0,target.hp-d);
- if(d>0&&!target.ult){target.eveil=Math.min(EVEIL_MAX,target.eveil+d);if(target.eveil>=EVEIL_MAX){target.ult=true;const bi=g.sides[s].team.indexOf(target);g.sides[s].combat.unshift(mk(bi,BIBBITS[target.k].ult,{ultime:true}));g.log.push('✨ '+target.nom+' s\'éveille ! Son Ultime est inséré en tête du paquet de combat.');}}
+function hurt(g,s,target,n,pierce){if(n<=0)return 0;const b0=target.block;let d=n;if(!pierce){const ab=Math.min(target.block,d);target.block-=ab;d-=ab;}target.hp=Math.max(0,target.hp-d);ev(g,{t:'dmg',s,i:g.sides[s].team.indexOf(target),n:d,blocked:pierce?0:b0-target.block,hp:target.hp,eveil:Math.min(EVEIL_MAX,target.eveil+(target.ult?0:d))});
+ if(d>0&&!target.ult){target.eveil=Math.min(EVEIL_MAX,target.eveil+d);if(target.eveil>=EVEIL_MAX){target.ult=true;const bi=g.sides[s].team.indexOf(target);g.sides[s].combat.unshift(mk(bi,BIBBITS[target.k].ult,{ultime:true}));ev(g,{t:'ult',s,i:bi,nom:BIBBITS[target.k].ult[0]});g.log.push('✨ '+target.nom+' s\'éveille ! Son Ultime est inséré en tête du paquet de combat.');}}
  return d;}
-function playRound(g){if(g.over)return;g.round++;g.log.push('— Manche '+g.round+' —');
+function playRound(g){if(g.over)return;g.round++;g.log.push('— Manche '+g.round+' —');g.ev=[];
  const flips=g.sides.map(S=>{const c=S.combat.shift();S.played=c;return c;});
  const act=[0,1].map(s=>{const c=flips[s],S=g.sides[s];let fx=Object.assign({},c.fx),combo=null;
   if(S.lastEl&&!c.fane)for(const k of COMBOS)if(k[0]===S.lastEl&&k[1]===c.el){combo=k[2];for(const x in k[3])fx[x]=(fx[x]||0)+k[3][x];break;}
   if(!c.fane)S.lastEl=c.el;
   const who=c.fane?lowest(S.team):S.team[c.b];
   g.log.push((s===0?'Toi':'IA')+' : '+(c.fane?'carte Fané !':who.nom+' joue « '+c.nom+' » ('+c.el+')')+(combo?' — COMBO '+combo+' !':''));
-  return{s,c,fx,who};});
+  ev(g,{t:'flip',s,c,combo,i:S.team.indexOf(who)});return{s,c,fx,who};});
  // phase 1 : défense / soins / puissance
  act.forEach(({s,c,fx,who})=>{const T=g.sides[s].team;if(c.fane)return;
-  if(fx.block)who.block+=fx.block;if(fx.power)who.power+=fx.power;
-  if(fx.heal){const t=lowest(T);t.hp=Math.min(t.max,t.hp+fx.heal);g.log.push('  '+t.nom+' récupère '+fx.heal+' PV');}
-  if(fx.healAll)T.forEach(t=>{if(t.hp>0)t.hp=Math.min(t.max,t.hp+fx.healAll);});});
+  if(fx.block){who.block+=fx.block;ev(g,{t:'block',s,i:T.indexOf(who),n:fx.block});}if(fx.power){who.power+=fx.power;ev(g,{t:'power',s,i:T.indexOf(who),n:fx.power});}
+  if(fx.heal){const t=lowest(T);t.hp=Math.min(t.max,t.hp+fx.heal);ev(g,{t:'heal',s,i:T.indexOf(t),n:fx.heal,hp:t.hp});g.log.push('  '+t.nom+' récupère '+fx.heal+' PV');}
+  if(fx.healAll)T.forEach(t=>{if(t.hp>0)t.hp=Math.min(t.max,t.hp+fx.healAll);ev(g,{t:'heal',s,i:T.indexOf(t),n:fx.healAll,hp:t.hp});});});
  // phase 2 : attaques (cible : Bibbit adverse actif)
  act.forEach(({s,c,fx,who})=>{const o=1-s,tgt=act[o].who;
   if(c.fane){const d=hurt(g,s,who,c.fx.fane,true);g.log.push('  La corruption Fané blesse '+who.nom+' ('+d+')');return;}
-  if(fx.dmg){const hits=fx.hits||1;let tot=0;const base=fx.dmg+who.power;for(let i=0;i<hits;i++)tot+=hurt(g,o,tgt,base);g.log.push('  '+who.nom+' inflige '+tot+' à '+tgt.nom+(who.power?' (puissance +'+who.power+')':''));who.power=0;}
+  if(fx.dmg||fx.direct)ev(g,{t:'lunge',s,i:g.sides[s].team.indexOf(who),o,ti:g.sides[o].team.indexOf(tgt),el:c.el});if(fx.dmg){const hits=fx.hits||1;let tot=0;const base=fx.dmg+who.power;for(let i=0;i<hits;i++)tot+=hurt(g,o,tgt,base);g.log.push('  '+who.nom+' inflige '+tot+' à '+tgt.nom+(who.power?' (puissance +'+who.power+')':''));who.power=0;}
   if(fx.direct){const d=hurt(g,o,tgt,fx.direct,true);g.log.push('  '+d+' dégâts directs à '+tgt.nom);}});
  // fin de manche : la carte retourne sous le paquet (sauf Fané)
  act.forEach(({s,c})=>{if(!c.fane)g.sides[s].combat.push(c);});
@@ -52,6 +52,7 @@ function playRound(g){if(g.over)return;g.round++;g.log.push('— Manche '+g.roun
  const ko=g.sides.map(S=>S.team.some(t=>t.hp<=0));
  if(ko[0]||ko[1]){g.over=true;g.winner=ko[0]&&ko[1]?'nul':ko[1]?0:1;g.log.push(g.winner==='nul'?'Double KO : match nul !':g.winner===0?'🏆 Victoire !':'💀 Défaite…');}
  else if(g.round>=MAX_ROUNDS){g.over=true;g.winner='nul';g.log.push('Limite de manches : match nul.');}}
+function ev(g,e){(g.ev=g.ev||[]).push(e);}
 function draw3(g,s){const S=g.sides[s];return S.reserve.splice(0,3);}
 function commit(g,s,offer,pick,pos,faneOpp){const S=g.sides[s];if(offer.length){const c=offer.splice(pick,1)[0];S.combat.splice(Math.max(0,Math.min(pos,S.combat.length)),0,c);S.reserve.push(...offer);}
  if(faneOpp&&S.fane>0){S.fane=0;const O=g.sides[1-s];O.combat.splice(Math.floor(g.rng()*(O.combat.length+1)),0,mk(null,['Fané','Fané',{fane:3}],{fane:true}));g.log.push((s===0?'Tu glisses':'L\'IA glisse')+' une carte Fané dans le paquet adverse !');}}
