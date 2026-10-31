@@ -1,17 +1,17 @@
 <!doctype html><html lang="fr-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bibbits — Duel</title>
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{--Feu:#ff6a2b;--Mauve:#b46bff;--Eau:#39b6ff;--Or:#ffd23a;--Fane:#7fbf3a}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:Nunito,sans-serif;color:#f3eee6;user-select:none}
 body{background:radial-gradient(ellipse at 50% 35%,#3b2a55 0%,#1a1328 45%,#07050c 100%)}
 body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 15% 80%,#ff6a2b22,transparent 40%),radial-gradient(circle at 85% 20%,#39b6ff22,transparent 40%);pointer-events:none}
-.t{font-family:'Lilita One',cursive;letter-spacing:.5px}
+.t{font-family:'Cinzel',serif;letter-spacing:.5px}
 #stage{position:fixed;inset:0;display:flex;flex-direction:column}
 #top{display:flex;align-items:center;gap:10px;padding:6px 14px;background:linear-gradient(#000a,#0000)}
 #top .t{font-size:22px;background:linear-gradient(#ffe08a,#ff9a3a);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 2px 2px #000)}
 #round{margin-left:auto;font-size:16px}
-.btn{font-family:'Lilita One';font-size:16px;color:#fff;border:2px solid #ffd27a;border-radius:12px;padding:8px 18px;background:linear-gradient(#e0782c,#8f2f12);box-shadow:0 4px 0 #4a1606,0 0 14px #ff8a3a66;cursor:pointer;transition:transform .1s}
+.btn{font-family:'Cinzel';font-size:16px;color:#fff;border:2px solid #ffd27a;border-radius:12px;padding:8px 18px;background:linear-gradient(#e0782c,#8f2f12);box-shadow:0 4px 0 #4a1606,0 0 14px #ff8a3a66;cursor:pointer;transition:transform .1s}
 .btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #4a1606}
 .btn.sm{font-size:13px;padding:4px 10px;background:linear-gradient(#4a3a66,#241a36);border-color:#8a7ab0;box-shadow:none}
 #arena{flex:1;position:relative;display:grid;grid-template-columns:1fr 1.1fr 1fr;align-items:center;min-height:0}
@@ -38,12 +38,12 @@ body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle 
 /* cartes */
 .card{--c:#888;position:relative;width:min(12vw,130px);aspect-ratio:3/4.3;border-radius:12px;transform-style:preserve-3d;transition:transform .6s}
 .card .f,.card .b{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden}
-.card .b{background:repeating-linear-gradient(45deg,#2a1d40 0 8px,#22173a 8px 16px);border:3px solid #6a4f9a;display:grid;place-items:center;font-family:'Lilita One';font-size:26px;color:#ffd27a;text-shadow:0 0 10px #ff9a3a}
+.card .b{background:repeating-linear-gradient(45deg,#2a1d40 0 8px,#22173a 8px 16px);border:3px solid #6a4f9a;display:grid;place-items:center;font-family:'Cinzel';font-size:26px;color:#ffd27a;text-shadow:0 0 10px #ff9a3a}
 .card .f{transform:rotateY(180deg);background:linear-gradient(#2a2036,#120c1a);border:3px solid var(--c);box-shadow:0 0 16px var(--c);overflow:hidden}
 .card.up{transform:rotateY(180deg)}
 .card .ca{height:44%;background-size:cover;background-position:center 20%;border-bottom:2px solid var(--c)}
-.card .cn{font-family:'Lilita One';font-size:clamp(10px,1.15vw,14px);text-align:center;padding:3px 4px 0;line-height:1.05}
-.card .big{display:flex;justify-content:center;gap:6px;font-family:'Lilita One';font-size:clamp(16px,2.2vw,26px);margin-top:2px}
+.card .cn{font-family:'Cinzel';font-size:clamp(10px,1.15vw,14px);text-align:center;padding:3px 4px 0;line-height:1.05}
+.card .big{display:flex;justify-content:center;gap:6px;font-family:'Cinzel';font-size:clamp(16px,2.2vw,26px);margin-top:2px}
 .card .big b{display:flex;align-items:center;gap:1px;text-shadow:0 2px 3px #000}
 .card .ds{font-size:clamp(8px,.85vw,10px);text-align:center;opacity:.8;padding:0 4px}
 .card .tag{position:absolute;top:4px;left:4px;font-size:10px;background:var(--c);color:#000;border-radius:6px;padding:0 5px;font-weight:800}
@@ -62,23 +62,23 @@ body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle 
 #hand .card .f,#hand .card .b{}#hand .card{transform-style:flat}#hand .card .f{transform:none}#hand .card .b{display:none}
 #row{display:flex;align-items:center;gap:2px;padding:6px 10px;background:#0008;border:1px solid #ffffff1a;border-radius:12px;max-width:100%;overflow-x:auto}
 .mini{width:42px;height:58px;border-radius:6px;border:2px solid var(--c);background:linear-gradient(#2a2036,#120c1a) ;font-size:9px;text-align:center;flex:none;box-shadow:0 0 6px var(--c);overflow:hidden;position:relative}
-.mini .ma{height:26px;background-size:cover;background-position:center 20%}.mini b{display:block;font-family:'Lilita One';font-size:13px}
+.mini .ma{height:26px;background-size:cover;background-position:center 20%}.mini b{display:block;font-family:'Cinzel';font-size:13px}
 .mini.ins{animation:ins .5s cubic-bezier(.3,1.6,.5,1)}@keyframes ins{from{width:0;opacity:0;transform:translateY(-40px) scale(1.6)}}
 .gap{width:10px;height:58px;border-radius:5px;flex:none;transition:all .2s}.picking .gap{width:16px;background:#7dff7a33;border:2px dashed #7dff7a;cursor:pointer}.picking .gap:hover{width:30px;background:#7dff7a88}
 .hint{font-size:13px;opacity:.85;text-align:center}
 /* fx */
-.float{position:absolute;z-index:40;font-family:'Lilita One';font-size:34px;pointer-events:none;text-shadow:0 3px 0 #000,0 0 10px #000;animation:fl 1.1s forwards}
+.float{position:absolute;z-index:40;font-family:'Cinzel';font-size:34px;pointer-events:none;text-shadow:0 3px 0 #000,0 0 10px #000;animation:fl 1.1s forwards}
 @keyframes fl{0%{transform:translate(-50%,0) scale(.4);opacity:0}15%{transform:translate(-50%,-20px) scale(1.3);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
 .pt{position:absolute;z-index:39;width:8px;height:8px;border-radius:50%;pointer-events:none;transition:transform .7s cubic-bezier(.1,.8,.3,1),opacity .7s}
 #stage.shake{animation:shake .45s}
-.banner{position:fixed;left:0;right:0;top:40%;z-index:60;text-align:center;font-family:'Lilita One';font-size:clamp(40px,8vw,90px);pointer-events:none;animation:ban 1.2s forwards;text-shadow:0 0 20px var(--c),0 5px 0 #000;color:#fff}
+.banner{position:fixed;left:0;right:0;top:40%;z-index:60;text-align:center;font-family:'Cinzel';font-size:clamp(40px,8vw,90px);pointer-events:none;animation:ban 1.2s forwards;text-shadow:0 0 20px var(--c),0 5px 0 #000;color:#fff}
 @keyframes ban{0%{transform:scale(3);opacity:0}20%{transform:scale(1);opacity:1}80%{opacity:1}100%{transform:scale(.9);opacity:0}}
 #splash{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:radial-gradient(#ffd23a55,#000e 70%)}
 #splash.on{display:flex;animation:sp 1.6s forwards}@keyframes sp{0%{opacity:0}15%,80%{opacity:1}100%{opacity:0}}
 #splash img{width:min(40vh,300px);border-radius:20px;border:4px solid gold;box-shadow:0 0 60px gold;animation:zz 1.6s}@keyframes zz{from{transform:scale(.3) rotate(-10deg)}30%{transform:scale(1.05)}}
-#splash div{font-family:'Lilita One';font-size:clamp(28px,5vw,56px);color:gold;text-shadow:0 0 20px #f80,0 4px 0 #000;margin-left:20px;max-width:40vw}
+#splash div{font-family:'Cinzel';font-size:clamp(28px,5vw,56px);color:gold;text-shadow:0 0 20px #f80,0 4px 0 #000;margin-left:20px;max-width:40vw}
 #end{position:fixed;inset:0;z-index:80;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#000b}
-#end.on{display:flex}#end h1{font-family:'Lilita One';font-size:clamp(50px,10vw,110px);margin:0;animation:zz .8s}
+#end.on{display:flex}#end h1{font-family:'Cinzel';font-size:clamp(50px,10vw,110px);margin:0;animation:zz .8s}
 #log{position:fixed;right:10px;top:46px;width:min(380px,40vw);max-height:55vh;overflow:auto;background:#000d;border:1px solid #fff3;border-radius:10px;padding:8px;font-size:12px;white-space:pre-wrap;z-index:50;display:none}#log.on{display:block}
 #pick{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(#3b2a55,#07050c)}
 #pick .opts{display:flex;gap:24px}.opt{cursor:pointer;transition:transform .2s;text-align:center}.opt:hover{transform:translateY(-10px) scale(1.04)}
@@ -100,13 +100,86 @@ body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle 
 #pick .opts{gap:10px;flex-wrap:wrap;justify-content:center}.opt .unit{width:min(28vw,17vh)}
 #splash{flex-direction:column}#splash div{margin:16px 0 0;max-width:90vw;text-align:center}
 
-.card .gem{position:absolute;top:3px;left:3px;z-index:3;width:28px;height:28px;display:grid;place-items:center;font-family:'Lilita One';font-size:17px;color:#fff;background:radial-gradient(circle at 35% 30%,#9fe8ff,#2a6cff 55%,#14206a);border:2px solid #cfe9ff;border-radius:50%;box-shadow:0 0 10px #3a8bff,0 2px 3px #000;text-shadow:0 1px 2px #000}
+.card .gem{position:absolute;top:3px;left:3px;z-index:3;width:28px;height:28px;display:grid;place-items:center;font-family:'Cinzel';font-size:17px;color:#fff;background:radial-gradient(circle at 35% 30%,#9fe8ff,#2a6cff 55%,#14206a);border:2px solid #cfe9ff;border-radius:50%;box-shadow:0 0 10px #3a8bff,0 2px 3px #000;text-shadow:0 1px 2px #000}
 .card .tag{left:auto;right:4px}
 .card.poor .f{filter:grayscale(.9) brightness(.55)}.card.poor{cursor:not-allowed}
-.mini .mg{position:absolute;top:1px;left:1px;font-style:normal;font-family:'Lilita One';font-size:10px;width:14px;height:14px;line-height:14px;border-radius:50%;background:#2a6cff;box-shadow:0 0 4px #3a8bff}
-#mana{position:fixed;z-index:55;right:max(10px,calc(50vw - 28.1vh + 10px));bottom:calc(36vh);width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:'Lilita One';font-size:28px;color:#fff;text-shadow:0 2px 3px #000;background:radial-gradient(circle at 35% 30%,#bff0ff,#2a7cff 50%,#0d1a5a 85%);border:3px solid #d8eeff;box-shadow:0 0 22px #3a8bff,inset 0 -6px 12px #0008;transition:transform .3s}
+.mini .mg{position:absolute;top:1px;left:1px;font-style:normal;font-family:'Cinzel';font-size:10px;width:14px;height:14px;line-height:14px;border-radius:50%;background:#2a6cff;box-shadow:0 0 4px #3a8bff}
+#mana{position:fixed;z-index:55;right:max(10px,calc(50vw - 28.1vh + 10px));bottom:calc(36vh);width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:'Cinzel';font-size:28px;color:#fff;text-shadow:0 2px 3px #000;background:radial-gradient(circle at 35% 30%,#bff0ff,#2a7cff 50%,#0d1a5a 85%);border:3px solid #d8eeff;box-shadow:0 0 22px #3a8bff,inset 0 -6px 12px #0008;transition:transform .3s}
 #mana small{position:absolute;bottom:-16px;font-size:11px;font-family:Nunito;font-weight:800;white-space:nowrap;text-shadow:0 1px 2px #000}
 #mana.pop{animation:mpop .5s}@keyframes mpop{50%{transform:scale(1.3)}}
+/* ===== Style encre & or ===== */
+:root{--gold:#d4af37;--gold2:#f3d98a;--ink:#0d0b09;--parch:#efe6d2}
+body{background:#0d0b09;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--parch)}
+body:before{display:none}
+.t,.btn,.float,.banner,#mana,.card .cn,.card .big,.gem,.mini b,.vs,#end h1,#splash div{font-family:'Cinzel',serif!important;font-weight:800}
+#stage{background:#0d0b09 url(img/board.webp) center/cover no-repeat!important;box-shadow:0 0 0 1px #d4af3755,0 0 80px #000}
+#top{background:linear-gradient(#0d0b09ee,#0d0b0900);border-bottom:1px solid #d4af3744}
+#top .t{background:none;color:var(--gold2);-webkit-text-fill-color:var(--gold2);filter:none;text-shadow:0 1px 0 #000;letter-spacing:2px;font-size:15px}
+#round{color:var(--gold2)}
+.btn{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);background:linear-gradient(#1d1814,#0b0907);border:1px solid var(--gold);border-radius:3px;box-shadow:0 0 0 3px #0b0907,0 0 0 4px #d4af3766,0 6px 14px #000a;padding:9px 20px}
+.btn:hover{box-shadow:0 0 0 3px #0b0907,0 0 0 4px var(--gold),0 0 18px #ff8a3a55}
+.btn.sm{font-size:11px;padding:5px 10px;background:#0b0907cc;border-color:#d4af3799;box-shadow:none;color:var(--gold2)}
+.vs{color:var(--gold);opacity:.75;text-shadow:0 0 10px #ff6a1f}
+/* héros */
+.unit{aspect-ratio:3/4;border-radius:4px;background:#000;border:1px solid var(--gold);box-shadow:0 0 0 2px #0b0907,0 8px 20px #000c;opacity:.92;overflow:visible}
+.unit.active{border-color:var(--gold2);box-shadow:0 0 0 2px #0b0907,0 0 18px var(--c),0 0 40px var(--c),0 10px 30px #000}
+.unit .art{inset:0;border-radius:3px;background-size:100% 100%;background-position:center}
+.unit .nm{top:2.6%;left:23%;right:5%;height:10%;display:flex;align-items:center;justify-content:center;background:linear-gradient(#f3ead6,#e6dbc1);color:#2a2115;font-size:clamp(10px,3.2vw,15px);letter-spacing:2px;border-top:1px solid #b8963a;border-bottom:1px solid #b8963a;text-shadow:none}
+.unit .el{top:2.5%;left:4%;width:18%;height:auto;aspect-ratio:1;border-radius:50%;background:radial-gradient(#1a1410,#000);border:1px solid var(--gold);color:var(--c);box-shadow:0 0 10px var(--c);font-size:clamp(12px,3.6vw,18px);text-shadow:0 0 8px var(--c)}
+.unit .stats{left:18%;right:18%;bottom:12%;font-size:10px}
+.unit:after{}
+.hp{height:11px;border-radius:0;background:#000;border:1px solid var(--gold)}
+.hp i{border-radius:0}.hp .fill{background:linear-gradient(#e2502a,#8a1a0a)}.hp .trail{background:#f3d98a}
+.hp span{color:#fff;font-family:'Cinzel';font-size:9px;line-height:10px}
+.ev{height:4px;border-radius:0;background:#000;border:1px solid #d4af3766;margin-top:3px}.ev i{background:linear-gradient(90deg,#d4af37,#fff2b0)}
+.badges{position:absolute;top:auto;bottom:3%;left:0;right:0;flex-direction:row;justify-content:space-between;padding:0 4%;pointer-events:none;height:22%;align-items:center}
+.badges b{background:#0b0907;border-radius:0;min-width:22%;padding:0;text-align:center;font-family:'Cinzel';font-size:clamp(12px,4vw,20px);color:var(--gold2);height:60%;display:flex;align-items:center;justify-content:center}
+.badges b.pw:before{content:'▲';font-size:.6em;margin-right:2px;color:#ffd23a}.badges b.bl:before{content:'⛨';font-size:.7em;margin-right:2px;color:#9fd4ff}
+.badges b:empty:before{opacity:.35}
+.unit:before{content:'';position:absolute;left:4%;right:4%;bottom:2%;height:9%;background:#0b0907;z-index:1}
+.unit .stats,.unit .badges{z-index:2}
+.unit.ko{filter:grayscale(1) brightness(.45) sepia(.3)}
+/* cartes */
+.card .b{background:radial-gradient(#2a2118,#0b0907);border:1px solid var(--gold);border-radius:4px;box-shadow:inset 0 0 0 4px #0b0907,inset 0 0 0 5px #d4af3788}
+.card .b span{font-family:'Cinzel';font-size:28px;color:var(--gold)}
+.card .f{border-radius:4px;background:var(--parch);border:1px solid var(--gold);box-shadow:0 0 0 2px #0b0907,0 0 16px var(--c);display:flex;flex-direction:column}
+.card .ca{height:46%;margin:5px 5px 0;border:1px solid #b8963a;border-bottom:1px solid #b8963a;background-size:cover;background-position:center 30%;filter:contrast(1.05)}
+.card .cn{color:#1d160e;font-size:clamp(9px,2.6vw,13px);padding:3px 4px;letter-spacing:.5px;border-bottom:1px solid #b8963a88;margin:0 6px}
+.card .pn{flex:1;background:#0b0907;margin:3px 4px 4px;border-top:1px solid var(--gold);display:flex;flex-direction:column;justify-content:center}
+.card .big{font-size:clamp(14px,4.6vw,22px);gap:5px;flex-wrap:wrap}
+.card .ds{color:#d4af37bb;font-size:clamp(8px,2.2vw,10px);font-style:italic;font-family:'Cormorant Garamond'}
+.card .gem{width:26px;height:30px;top:2px;left:2px;border-radius:0;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#0b0907;border:none;color:var(--gold2);box-shadow:none;font-size:16px;outline:1px solid var(--gold)}
+.card .tag{background:#0b0907;color:var(--c);border:1px solid var(--gold);border-radius:50%;width:20px;height:20px;display:grid;place-items:center;padding:0;top:4px;right:4px;text-shadow:0 0 6px var(--c)}
+.card.ultime .f{box-shadow:0 0 0 2px #0b0907,0 0 26px #ffcf5a,0 0 50px var(--c)}
+.card.poor .f{filter:grayscale(1) brightness(.6)}
+.mini{border:1px solid var(--gold);border-radius:2px;background:#0b0907;box-shadow:0 0 6px var(--c)}
+.mini b{color:var(--gold2);font-size:10px}
+.mini .mg{background:#0b0907;border:1px solid var(--gold);color:var(--gold2);border-radius:0;clip-path:none}
+#row{background:#0b0907dd;border:1px solid #d4af3777;border-radius:2px}
+.picking .gap{background:#d4af3722;border:1px dashed var(--gold)}.picking .gap:hover{background:#d4af3766}
+.deck div{background:radial-gradient(#2a2118,#0b0907);border:1px solid var(--gold);border-radius:3px}
+.deck span{background:#0b0907;border:1px solid #d4af3777;border-radius:0;color:var(--gold2);font-family:'Cinzel'}
+.hint{color:var(--parch);text-shadow:0 1px 3px #000,0 0 6px #000}
+/* mana */
+#mana{background:radial-gradient(circle at 50% 40%,#2a2118,#0b0907 70%);border:1px solid var(--gold);box-shadow:0 0 0 3px #0b0907,0 0 0 4px #d4af3788,0 0 24px #3fb8ff88;color:#bfe8ff;text-shadow:0 0 10px #3fb8ff}
+#mana small{color:var(--gold2);font-family:'Cinzel'}
+/* fx & écrans */
+.float{text-shadow:0 2px 0 #000,0 0 8px #000}
+.banner{color:var(--gold2);letter-spacing:3px;text-shadow:0 0 18px var(--c),0 3px 0 #000}
+#splash{background:radial-gradient(#d4af3744,#0b0907ee 70%)}#splash img{border:1px solid var(--gold);border-radius:4px;box-shadow:0 0 0 4px #0b0907,0 0 60px var(--gold)}
+#splash div{color:var(--gold2)}
+#end{background:#0b0907d8}#end h1{letter-spacing:4px}
+#log{background:#0b0907ee;border:1px solid #d4af3777;border-radius:2px;font-family:'Cormorant Garamond';font-size:14px}
+#pick{background:#0b0907 url(img/board.webp) center/cover;overflow-y:auto;justify-content:flex-start;padding:20px 8px}
+#pick:before{content:'';position:fixed;inset:0;background:#0b0907bb;z-index:-1}
+#pick .ttl{font-size:26px;color:var(--gold2);letter-spacing:3px;margin-top:6px}#pick .sub{color:var(--parch);font-size:16px}
+#pick .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;width:100%;max-width:640px}
+.opt .unit{width:100%}.opt.chosen .unit{box-shadow:0 0 0 2px #0b0907,0 0 24px var(--c);border-color:var(--gold2)}
+.stats.ps{bottom:3%;left:6%;right:6%;text-align:center;color:var(--gold2);font-family:'Cinzel';font-size:10px;line-height:1.15;z-index:3}
+.stats.ps small{font-family:'Cormorant Garamond';color:var(--parch);font-size:10px}
+.opt .unit:before{height:17%}
+.unit .el{top:1.6%;left:3.2%;width:20%;height:23%;aspect-ratio:auto;border-radius:0;clip-path:polygon(50% 0,100% 22%,100% 78%,50% 100%,0 78%,0 22%);border:none;background:radial-gradient(#221a12,#000 75%)}
+@media (max-width:440px){#top>span.t:first-child{display:none}#top .btn.sm{font-size:10px;padding:4px 7px;letter-spacing:1px}}
 </style></head><body>
 <div id="stage">
  <div id="top"><span class="t">Bibbits · Duel</span><span id="round" class="t"></span><button class="btn sm" onclick="toggleLog()">Journal</button><button class="btn sm" onclick="restart()">Recommencer</button></div>
@@ -117,16 +190,16 @@ body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle 
 <script src="engine.js"></script><script>
 const D=Duel,K=Object.keys(D.BIBBITS),$=s=>document.getElementById(s),wait=ms=>new Promise(r=>setTimeout(r,ms*SPEED));
 let SPEED=1,g,offer=null,sel=null,useFane=false,busy=false,choice=[],lastIns=null;
-const EL={Feu:'🔥',Mauve:'🌙',Eau:'💧',Or:'✨',Fané:'☠'};const COL=e=>`var(--${e==='Fané'?'Fane':e})`;
-const HEX={Feu:'#ff6a2b',Mauve:'#b46bff',Eau:'#39b6ff',Or:'#ffd23a',Fané:'#7fbf3a'};
-function icons(f){const p=[];if(f.dmg)p.push(`<b style="color:#ff8a6a">⚔${f.dmg}${f.hits?'<small>×'+f.hits+'</small>':''}</b>`);if(f.direct)p.push(`<b style="color:#ff5ad0">☄${f.direct}</b>`);if(f.block)p.push(`<b style="color:#8ad0ff">🛡${f.block}</b>`);if(f.heal)p.push(`<b style="color:#8aff8a">✚${f.heal}</b>`);if(f.healAll)p.push(`<b style="color:#8aff8a">✚✚${f.healAll}</b>`);if(f.power)p.push(`<b style="color:#ffd23a">⚡${f.power}</b>`);if(f.fane)p.push(`<b style="color:#7fbf3a">☠${f.fane}</b>`);return p.join('')}
-function cardHTML(c,s,cls=''){const t=c.fane?null:g.sides[s].team[c.b];return `<div class="card ${cls} ${c.ultime?'ultime':''}" style="--c:${COL(c.el)}"><div class="b">B</div><div class="f">${c.cout?`<span class="gem">${c.cout}</span>`:''}<span class="tag">${EL[c.el]} ${c.el}</span><div class="ca" style="background-image:${t?`url(${t.img})`:'radial-gradient(#7fbf3a,#1a2a10)'}"></div><div class="cn">${c.nom}</div><div class="big">${icons(c.fx)}</div><div class="ds">${t?t.nom:'Corruption'}</div></div></div>`}
-function miniHTML(c,s,cls=''){const t=c.fane?null:g.sides[s].team[c.b];return `<div class="mini ${cls}" style="--c:${COL(c.el)}">${c.cout?`<i class="mg">${c.cout}</i>`:''}<div class="ma" style="background-image:${t?`url(${t.img})`:'none'}"></div><b>${icons(c.fx).replace(/<[^>]+>/g,'').slice(0,6)}</b></div>`}
-function unitHTML(t,s,i){const el=D.BIBBITS[t.k].el;return `<div class="unit" id="u${s}${i}" style="--c:${COL(el)}"><div class="el">${EL[el]}</div><div class="art" style="background-image:url(${t.img})"></div><div class="badges"></div><div class="nm t">${t.nom}</div><div class="stats"><div class="hp"><i class="trail"></i><i class="fill"></i><span></span></div><div class="ev"><i></i></div></div></div>`}
+
+const HEX={Sève:'#8fe04a',Eau:'#3fb8ff',Braise:'#ff6a1f',Roc:'#c9a26a',Foudre:'#ffe23a',Givre:'#9fe9ff',Aube:'#ffcf5a',Crépuscule:'#a873ff',Fané:'#7fbf3a'};const EL={Sève:'❦',Eau:'≈',Braise:'✹',Roc:'◆',Foudre:'ϟ',Givre:'❄',Aube:'☀',Crépuscule:'☾',Fané:'☠'};const COL=e=>HEX[e]||'#d4af37';
+function icons(f){const p=[],I=(c,t)=>p.push(`<b style="color:${c}">${t}</b>`);if(f.dmg)I('#ff7a4a','⚔'+f.dmg+(f.hits?'<small>×'+f.hits+'</small>':''));if(f.direct)I('#ff5ad0','☄'+f.direct);if(f.splash)I('#ffa04a','✷'+f.splash);if(f.block)I('#9fd4ff','⛨'+f.block);if(f.shieldAll)I('#9fd4ff','⛨⛨'+f.shieldAll);if(f.thorns)I('#c9a26a','✦'+f.thorns);if(f.heal)I('#8fe08a','✚'+f.heal);if(f.healAll)I('#8fe08a','✚✚'+f.healAll);if(f.power)I('#ffd23a','▲'+f.power);if(f.chill)I('#9fe9ff','❄'+f.chill);if(f.shred)I('#ff9a6a','⨯⛨');if(f.drain)I('#c07aff','♥');if(f.fane)I('#7fbf3a','☠'+f.fane);return p.join('')}
+function cardHTML(c,s,cls=''){const t=c.fane?null:g.sides[s].team[c.b];return `<div class="card ${cls} ${c.ultime?'ultime':''}" style="--c:${COL(c.el)}"><div class="b"><span>B</span></div><div class="f">${c.cout?`<span class="gem">${c.cout}</span>`:''}<span class="tag">${EL[c.el]}</span><div class="ca" style="background-image:${t?`url(${t.img})`:'radial-gradient(#7fbf3a,#1a2a10)'}"></div><div class="cn">${c.nom}</div><div class="pn"><div class="big">${icons(c.fx)}</div><div class="ds">${t?t.nom:'Corruption'} · ${c.el}</div></div></div></div>`}
+function miniHTML(c,s,cls=''){const t=c.fane?null:g.sides[s].team[c.b];return `<div class="mini ${cls}" style="--c:${COL(c.el)}">${c.cout?`<i class="mg">${c.cout}</i>`:''}<div class="ma" style="background-image:${t?`url(${t.img})`:'none'}"></div><b>${icons(c.fx).replace(/<small>.*?<\/small>/g,'').replace(/<[^>]+>/g,' ').trim().split(' ')[0]||''}</b></div>`}
+function unitHTML(t,s,i){const el=D.BIBBITS[t.k].el;return `<div class="unit" id="u${s}${i}" style="--c:${COL(el)}"><div class="art" style="background-image:url(${t.img})"></div><div class="el">${EL[el]}</div><div class="nm t">${t.nom}</div><div class="badges"></div><div class="stats"><div class="hp"><i class="trail"></i><i class="fill"></i><span></span></div><div class="ev"><i></i></div></div></div>`}
 const U=(s,i)=>$('u'+s+i);
 function setHP(s,i,hp){const t=g.sides[s].team[i],u=U(s,i),w=100*hp/t.max+'%';u.querySelector('.fill').style.width=w;u.querySelector('.trail').style.width=w;u.querySelector('.hp span').textContent=hp+' / '+t.max;u.classList.toggle('ko',hp<=0)}
 function setEv(s,i,v){const u=U(s,i);u.querySelector('.ev i').style.width=100*v/D.EVEIL_MAX+'%';u.classList.toggle('full',v>=D.EVEIL_MAX)}
-function setBadges(s,i,t){U(s,i).querySelector('.badges').innerHTML=(t.block?`<b>🛡${t.block}</b>`:'')+(t.power?`<b>⚡${t.power}</b>`:'')}
+function setBadges(s,i,t){U(s,i).querySelector('.badges').innerHTML=`<b class="pw">${t.power||''}</b><b class="bl">${t.block||''}</b>`}
 function sync(){g.sides.forEach((S,s)=>S.team.forEach((t,i)=>{setHP(s,i,t.hp);setEv(s,i,t.eveil);setBadges(s,i,t)}));[0,1].forEach(s=>{const S=g.sides[s];$('d'+s).innerHTML=[0,1,2].map(k=>`<div style="transform:translate(${-k*3}px,${-k*3}px)"></div>`).join('')+`<span>${S.combat.length} · rés. ${S.reserve.length}</span>`});$('log').textContent=g.log.join('\n');const P=g.sides[0];$('mv').textContent=offer?P.mana:Math.min(D.MANA_CAP,P.maxMana+1)+(P.saved?1:0);$('mx').textContent='max '+Math.min(D.MANA_CAP,P.maxMana+(offer?0:1));$('log').scrollTop=1e9}
 function center(el){const r=el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2}}
 function float(el,txt,color){const p=center(el),f=document.createElement('div');f.className='float';f.textContent=txt;f.style.color=color;f.style.left=p.x+'px';f.style.top=(p.y-30)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1200)}
@@ -152,8 +225,8 @@ function healGlow(u){const r=u.getBoundingClientRect();const d=fxDiv({x:r.left,y
 function shimmer(u){const r=u.getBoundingClientRect();const w=fxDiv({x:r.left,y:r.top},`width:${r.width}px;height:${r.height}px;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 20px #8ad0ff,0 0 20px #8ad0ff`);const b=document.createElement('div');b.style.cssText='position:absolute;top:-20%;bottom:-20%;width:40%;background:linear-gradient(90deg,transparent,#cfeaffcc,transparent);transform:skewX(-20deg)';w.appendChild(b);b.animate([{transform:'translateX(-150%) skewX(-20deg)'},{transform:`translateX(${r.width*1.6}px) skewX(-20deg)`}],{duration:600,iterations:2});w.animate([{opacity:0},{opacity:1,offset:.2},{opacity:1,offset:.8},{opacity:0}],{duration:1200}).onfinish=()=>w.remove()}
 function toggleLog(){$('log').classList.toggle('on')}
 // --- sélection d'équipe
-function teamPick(){const P=$('pick');P.style.display='flex';P.innerHTML=`<div class="t" style="font-size:clamp(26px,4vw,44px);color:#ffd27a;text-shadow:0 0 20px #f80">Choisis ton équipe (2 Bibbits)</div><div class="opts">`+K.map(k=>{const b=D.BIBBITS[k];return `<div class="opt" onclick="pickT('${k}')"><div class="unit" style="--c:${COL(b.el)}"><div class="el">${EL[b.el]}</div><div class="art" style="background-image:url(${b.img})"></div><div class="nm t">${b.nom}</div><div class="stats" style="text-align:center">${b.role}<br>❤ ${b.hp} PV</div></div></div>`}).join('')+`</div><div class="t" style="font-size:20px">${choice.map(k=>D.BIBBITS[k].nom).join(' + ')||'Doublon permis'}</div>`}
-function pickT(k){choice.push(k);if(choice.length<2)return teamPick();const ai=[K[Math.random()*3|0],K[Math.random()*3|0]];g=D.newGame(choice,ai);choice=[];g.log.push('L\'IA joue avec '+ai.map(k=>D.BIBBITS[k].nom).join(' et ')+'.');$('pick').style.display='none';build()}
+function teamPick(){const P=$('pick');P.style.display='flex';P.innerHTML=`<div class="t ttl">Choisis ton équipe</div><div class="sub">Deux Bibbits · doublon permis</div><div class="opts">`+K.map(k=>{const b=D.BIBBITS[k];return `<div class="opt ${choice.includes(k)?'chosen':''}" onclick="pickT('${k}')"><div class="unit" style="--c:${COL(b.el)}"><div class="art" style="background-image:url(${b.img})"></div><div class="el">${EL[b.el]}</div><div class="nm t">${b.nom}</div><div class="stats ps">${b.el} · ${b.hp} PV<br><small>${b.role}</small></div></div></div>`}).join('')+`</div><div class="t sub">${choice.map(k=>D.BIBBITS[k].nom).join(' + ')||'&nbsp;'}</div>`}
+function pickT(k){choice.push(k);if(choice.length<2)return teamPick();const ai=[K[Math.random()*K.length|0],K[Math.random()*K.length|0]];g=D.newGame(choice,ai);choice=[];g.log.push('L\'IA joue avec '+ai.map(k=>D.BIBBITS[k].nom).join(' et ')+'.');$('pick').style.display='none';build()}
 function build(){$('end').classList.remove('on');[0,1].forEach(s=>{$('t'+s).innerHTML=g.sides[s].team.map((t,i)=>unitHTML(t,s,i)).join('');$('c'+s).innerHTML=''});offer=null;sync();idle()}
 function rowHTML(picking){const P=g.sides[0];let h='';P.combat.forEach((c,i)=>{h+=`<div class="gap" onclick="place(${i})"></div>`+miniHTML(c,0,c.id===lastIns?'ins':'')});h+=`<div class="gap" onclick="place(${P.combat.length})"></div>`;$('row').className=picking?'picking':'';$('row').innerHTML=h;const ins=$('row').querySelector('.ins');if(ins)ins.scrollIntoView({inline:'center',block:'nearest'});lastIns=null}
 function idle(){busy=false;$('stage').classList.remove('pick');$('hand').innerHTML='';$('hint').textContent='Ton paquet de combat (prochaine carte à gauche)';rowHTML(false);$('act').innerHTML=`<button class="btn" onclick="next()">⚔ Combattre !</button>`}
@@ -172,6 +245,7 @@ async function next(){if(busy||g.over)return;busy=true;$('act').innerHTML='';con
   else if(e.t==='heal'){cardRise(cards[e.s]);healGlow(u);float(u,'+'+e.n,'#7dff7a');burst(u,'#7dff7a',12);setHP(e.s,e.i,e.hp);await wait(500)}
   else if(e.t==='lunge'){lastEl=e.el;await attack(cards[e.s],U(e.o,e.ti));}
   else if(e.t==='dmg'){impact(u,lastEl,e.n);u.classList.remove('hit');void u.offsetWidth;u.classList.add('hit');float(u,e.n?'-'+e.n:'BLOQUÉ',e.n?'#ff4a4a':'#8ad0ff');const lastL=[...E].reverse().find(x=>x.t==='lunge'&&E.indexOf(x)<E.indexOf(e));burst(u,lastL?HEX[lastL.el]:'#ff4a4a',e.n*3+6);setHP(e.s,e.i,e.hp);setEv(e.s,e.i,e.eveil);await wait(380)}
+  else if(e.t==='chill'){float(u,'❄'+e.n,'#9fe9ff');burst(u,'#9fe9ff',10);await wait(350)}
   else if(e.t==='brume'){banner('BRUME DU FANÉ','#7fbf3a');await wait(800)}
   else if(e.t==='ult'){await wait(300);const t=g.sides[e.s].team[e.i],S=$('splash');S.querySelector('img').src=t.img;S.querySelector('div').textContent='ÉVEIL ! '+e.nom.replace('Ultime : ','');S.classList.remove('on');void S.offsetWidth;S.classList.add('on');await wait(1650);S.classList.remove('on')}}
  await wait(500);cards.forEach(el=>{el.style.opacity=0;el.style.transform='rotateY(180deg) scale(.6)'});setTimeout(()=>cards.forEach(el=>el.remove()),500);setActive(null);sync();
