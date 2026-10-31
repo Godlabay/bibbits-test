@@ -1,4 +1,11 @@
-<!doctype html><html lang="fr-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!doctype html><html lang="fr-CA"><head><meta charset="utf-8"><script>
+// Bureau / écran large : on affiche le jeu mobile (430×844) dans un cadre mis à l'échelle de la hauteur.
+(function(){if(window.top!==window||location.search.includes('embed'))return;
+ if(innerWidth/innerHeight<0.62&&innerWidth<600)return;
+ document.documentElement.innerHTML='<head><meta charset="utf-8"><title>Bibbits — Duel</title><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b0907 url(img/board.webp) center/cover}body:before{content:"";position:fixed;inset:0;background:#0b0907d0;backdrop-filter:blur(6px)}#f{position:absolute;z-index:1;left:50%;top:50%;width:430px;height:844px;border:0;transform-origin:50% 50%;box-shadow:0 0 0 1px #d4af3788,0 0 80px #000}</style></head><body><iframe id="f" src="index.html?embed" allow="autoplay"></iframe></body>';
+ const f=document.getElementById('f');function fit(){const k=Math.min(innerWidth/430,innerHeight/844);f.style.transform='translate(-50%,-50%) scale('+k+')'}addEventListener('resize',fit);fit();
+ window.__EMBED=1;})();
+</script><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bibbits — Duel</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -257,5 +264,5 @@ function showPick(){$('stage').classList.add('pick');sync();const m=$('mana');m.
 async function place(pos){if(!offer||busy)return;if(sel==null&&event&&event.target.classList.contains('gap'))return;busy=true;const c=sel==null?null:offer[sel];D.commit(g,0,offer,sel==null?-1:sel,pos,useFane);lastIns=c&&c.id;$('hand').querySelectorAll('.card').forEach((el,i)=>{el.style.transition='all .4s';el.style.bottom=i===sel?'-260px':'-300px';el.style.opacity=i===sel?1:0});
  const o=D.draw3(g,1),a=D.aiChoose(g,1,o);D.commit(g,1,o,a.pick,a.pos,a.fane);offer=null;rowHTML(false);sync();if(useFane){banner('FANÉ ☠','#7fbf3a')}await wait(500);idle()}
 function restart(){if(busy)return;offer=null;choice=[];$('end').classList.remove('on');teamPick()}
-teamPick();
+if(!window.__EMBED)teamPick();
 </script></body></html>
