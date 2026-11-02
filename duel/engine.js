@@ -2,43 +2,43 @@
 (function(root,f){if(typeof module==='object')module.exports=f();else root.Duel=f();})(this,function(){
 const H=(nom,f,el,hp,role,cartes,ult)=>({nom,el,hp,role,img:'img/heroes/'+f+'.webp',cartes,ult});
 const BIBBITS={
- sylve:H('Sylve','ronceline','Sève',29,'Soigneuse · Relais',[
+ sylve:H('Sylve','ronceline','Sève',31,'Soigneuse · Relais',[
   ['Flèche de ronce',{dmg:3},1],['Sève vive',{heal:3},1],['Tir double',{dmg:2,hits:2},2],['Racines',{ally:4,heal:2},2],
   ['Flèche perçante',{pierce:5},3],['Floraison',{healAll:3},3],['Volée d\'épines',{dmg:3,hits:2,relais:2},4],['Arbre-mère',{healAll:4,shieldAll:3},5]],
   ['Pluie de ronces',{dmg:3,hits:3,healAll:5}]),
- marea:H('Maréa','lamecume','Eau',27,'Soutien · Élan',[
+ marea:H('Maréa','lamecume','Eau',28,'Soutien · Élan',[
   ['Onde apaisante',{heal:4},1],['Bulle',{ally:5},1],['Vague',{dmg:3,relais:2},2],['Écume dorée',{elan:4,heal:2},2],
   ['Marée montante',{dmg:4,heal:3},3],['Courant porteur',{elan:6,ally:3},3],['Grand geyser',{dmg:5,splash:2},4],['Source sacrée',{healAll:5,shieldAll:4},5]],
   ['Raz-de-marée',{dmg:6,splash:4,healAll:5}]),
- brok:H('Brok','atrefeu','Braise',34,'Cogneur · gros coups',[
+ brok:H('Brok','atrefeu','Braise',31,'Cogneur · gros coups',[
   ['Coup de marteau',{dmg:4},1],['Enclume levée',{block:5},1],['Forge ardente',{elan:3,block:2},2],['Braises',{pierce:3},2],
   ['Choc sismique',{dmg:5,block:3},3],['Enchaînement',{dmg:5,relais:3},3],['Frappe en fusion',{dmg:8},4],['Marteau titan',{dmg:10,block:3},5]],
   ['Marteau-volcan',{dmg:14,block:6}]),
- petrol:H('Pétrol','tisonnet','Braise',50,'Artificier · zone',[
+ petrol:H('Pétrol','tisonnet','Braise',44,'Artificier · zone',[
   ['Pétard',{dmg:3,splash:2},1],['Mèche courte',{pierce:2},1],['Bombe collante',{dmg:3,splash:2},2],['Barricade',{block:3,ally:3},2],
   ['Grenade',{dmg:4,splash:3},3],['Atelier',{elan:4,block:3},3],['Baril explosif',{dmg:5,splash:4},4],['Feu d\'artifice',{dmg:4,hits:2,splash:4},5]],
   ['Méga-bombe',{dmg:8,splash:8}]),
- granit:H('Granit','caillouteux','Roc',35,'Tank · Provocation',[
+ granit:H('Granit','caillouteux','Roc',36,'Tank · Provocation',[
   ['Coup de bouclier',{dmg:2,block:3},1],['Provocation',{guard:1,block:4},1],['Peau d\'épines',{block:3,thorns:1},2],['Charge',{dmg:5},2],
   ['Rempart',{shieldAll:4,guard:1},3],['Éboulement',{dmg:5,block:3},3],['Montagne vivante',{guard:1,block:7,thorns:2},4],['Séisme',{dmg:6,splash:4},5]],
   ['Cœur de granit',{guard:1,shieldAll:10,thorns:4}]),
- zephyr:H('Zéphyr','petardeau','Foudre',29,'Duelliste · Relais',[
+ zephyr:H('Zéphyr','petardeau','Foudre',27,'Duelliste · Relais',[
   ['Étincelle',{dmg:3},1],['Pas éclair',{block:3,elan:2},1],['Riposte',{dmg:2,hits:2},2],['Décharge',{pierce:3,relais:2},2],
   ['Arc électrique',{dmg:3,splash:3},3],['Fente fulgurante',{dmg:2,hits:3},3],['Tonnerre',{dmg:6,relais:4},4],['Tempête',{dmg:3,hits:3,splash:3},5]],
   ['Jugement céleste',{dmg:4,hits:4,pierce:4}]),
- krom:H('Krom','frimousson','Givre',38,'Bête de givre · Gel',[
+ krom:H('Krom','frimousson','Givre',39,'Bête de givre · Gel',[
   ['Griffe glacée',{dmg:3},1],['Souffle froid',{chill:3,block:2},1],['Fourrure épaisse',{block:5,guard:1},2],['Morsure gelée',{dmg:3,chill:3},2],
   ['Blizzard',{dmg:3,splash:3,chill:2},3],['Rugissement',{chill:5,elan:3},3],['Avalanche',{dmg:7,chill:3},4],['Hiver éternel',{dmg:5,chill:6,guard:1,block:4},5]],
   ['Zéro absolu',{dmg:8,chill:10,block:6}]),
- aurel:H('Aurel','lumignon','Aube',40,'Paladin · protège son allié',[
+ aurel:H('Aurel','lumignon','Aube',39,'Paladin · protège son allié',[
   ['Coup de masse',{dmg:3},1],['Lueur',{heal:3,ally:2},1],['Bouclier d\'aube',{ally:5,guard:1},2],['Châtiment',{dmg:3,pierce:2},2],
   ['Lanterne bénie',{shieldAll:3,heal:3},3],['Frappe sacrée',{dmg:5,heal:3},3],['Aube nouvelle',{healAll:4,shieldAll:3},4],['Jugement doré',{dmg:7,heal:3,guard:1},5]],
   ['Soleil levant',{dmg:6,healAll:6,shieldAll:4}]),
- lune:H('Lune','ninnelune','Crépuscule',33,'Assassine · Relais',[
+ lune:H('Lune','ninnelune','Crépuscule',28,'Assassine · Relais',[
   ['Lame lunaire',{dmg:3,relais:2},1],['Esquive',{block:4},1],['Aiguise-lames',{elan:4,dmg:1},2],['Double entaille',{dmg:2,hits:2,relais:2},2],
   ['Dague perfide',{pierce:5},3],['Danse des lames',{dmg:2,hits:3,drain:1},3],['Croissant fendu',{dmg:6,relais:4},4],['Éclipse tranchante',{dmg:3,hits:4},5]],
   ['Nuit des mille lames',{dmg:3,hits:5,drain:1}]),
- nyx:H('Nyx','veillombre','Crépuscule',59,'Dragonne · garde du corps',[
+ nyx:H('Nyx','veillombre','Crépuscule',55,'Dragonne · garde du corps',[
   ['Griffe d\'ombre',{dmg:3},1],['Aile protectrice',{ally:5,guard:1},1],['Morsure',{dmg:3,drain:1},2],['Écailles',{block:4,thorns:2},2],
   ['Souffle nocturne',{dmg:3,splash:3},3],['Couvée',{shieldAll:4,heal:3},3],['Vol plané',{dmg:5,ally:4},4],['Souffle du néant',{dmg:5,splash:4,drain:1},5]],
   ['Ailes de la nuit',{guard:1,shieldAll:8,dmg:6,splash:4}])
@@ -47,20 +47,22 @@ const COMBOS=[['Eau','Braise','Vapeur',{dmg:2}],['Braise','Foudre','Surcharge',{
  ['Sève','Roc','Racines profondes',{block:3}],['Sève','Eau','Rosée',{heal:3}],['Givre','Foudre','Orage glacé',{dmg:2}],['Aube','Crépuscule','Éclipse',{pierce:2}],
  ['Roc','Braise','Magma',{dmg:3}],['Eau','Givre','Verglas',{chill:2}],['Braise','Sève','Cendres fertiles',{heal:3}],['Aube','Sève','Lumière vive',{heal:3}],
  ['Crépuscule','Givre','Nuit glaciale',{chill:2}],['Roc','Aube','Rempart sacré',{block:3}],['Foudre','Crépuscule','Orage noir',{dmg:2}]];
-const P={BK:4,HPX:1.3,ULT:15,BRUME:7,MANA0:2,MANA_CAP:9};
+const P={CAP:6,BK:4,HPX:1.3,ULT:15,BRUME:7,MANA0:2,MANA_CAP:9};
 let uid=0;
-const mk=(b,el,c,ex)=>Object.assign({id:++uid,b,el,nom:c[0],fx:c[1],cout:c[2]||0},ex||{});
+const mk=(b,el,c,ex)=>Object.assign({id:++uid,b,el,nom:c[0],fx:c[1],cout:c[2]||0,key:b+':'+c[0]},ex||{});
+const tier=c=>c.cout>=4?3:c.cout===3?2:1, MAXC=[0,3,2,1], TIERN=['','commune','rare','élite'];
+const count=(S,c)=>S.line.filter(x=>x.key===c.key).length;
 function shuffle(a,r){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function newGame(A,B,rng){rng=rng||Math.random;
  const sides=[A,B].map(team=>{const t=team.map(k=>{const d=BIBBITS[k],hp=Math.round(d.hp*P.HPX);return{k,nom:d.nom,el:d.el,img:d.img,hp,max:hp,block:0,guard:0,thorns:0,ult:0,ultDone:false};});
-  let res=[];team.forEach((k,i)=>BIBBITS[k].cartes.forEach(c=>res.push(mk(i,BIBBITS[k].el,c))));shuffle(res,rng);
+  let res=[];team.forEach((k,i)=>BIBBITS[k].cartes.forEach(c=>{const n=MAXC[c[2]>=4?3:c[2]===3?2:1];for(let j=0;j<n;j++)res.push(mk(i,BIBBITS[k].el,c));}));shuffle(res,rng);
   const line=[0,1].map(i=>{const c=res.find(c=>c.b===i&&c.cout===1);res.splice(res.indexOf(c),1);return c;});
   return{team:t,line,reserve:res,lastLine:[],mana:0,saved:0,offer:[],elan:0,chill:0,prev:null};});
  return{sides,round:0,over:false,winner:null,log:[],ev:[],rng};}
 // ---- planification ----
-function startPlanning(g){g.sides.forEach(S=>{S.mana=Math.min(P.MANA_CAP,P.MANA0+g.round)+S.saved;S.saved=0;S.offer=S.reserve.slice(0,3);});}
-function buy(g,s,idx,pos){const S=g.sides[s];S.offer.forEach(c=>S.reserve.splice(S.reserve.indexOf(c),1));
- let c=null;if(idx>=0&&S.offer[idx]&&S.offer[idx].cout<=S.mana){c=S.offer[idx];S.mana-=c.cout;S.line.splice(Math.max(0,Math.min(pos,S.line.length)),0,c);}else S.saved=1;
+function startPlanning(g){g.sides.forEach(S=>{S.mana=Math.min(P.MANA_CAP,P.MANA0+g.round)+S.saved;S.saved=0;S.offer=[];const seen=new Set();for(const c of S.reserve){if(S.offer.length>=3)break;if(seen.has(c.key)||count(S,c)>=MAXC[tier(c)])continue;seen.add(c.key);S.offer.push(c);}});}
+function buy(g,s,idx,pos,sac){const S=g.sides[s];if(idx>=0&&S.line.length>=P.CAP){if(sac==null||!S.line[sac]||S.line[sac].ultime)idx=-1;else{const x=S.line.splice(sac,1)[0];S.reserve.push(x);if(pos>sac)pos--;}}S.offer.forEach(c=>S.reserve.splice(S.reserve.indexOf(c),1));
+ let c=null;if(idx>=0&&S.offer[idx]&&S.offer[idx].cout<=S.mana&&count(S,S.offer[idx])<MAXC[tier(S.offer[idx])]){c=S.offer[idx];S.mana-=c.cout;S.line.splice(Math.max(0,Math.min(pos,S.line.length)),0,c);}else S.saved=1;
  S.offer.forEach(x=>{if(x!==c)S.reserve.push(x);});S.offer=[];return c;}
 const val=f=>(f.dmg||0)*(f.hits||1)+(f.pierce||0)*1.2+(f.splash||0)*.8+(f.block||0)*.7+(f.ally||0)*.8+(f.shieldAll||0)*1.4+(f.heal||0)*.9+(f.healAll||0)*1.7+(f.elan||0)*.8+(f.chill||0)*.8+(f.guard?2:0)+(f.thorns||0)*1.2+(f.relais||0)*.6+(f.drain?2:0);
 const atk=f=>(f.dmg||0)*(f.hits||1)+(f.pierce||0)+(f.splash||0);
@@ -73,7 +75,8 @@ function aiPlan(g,s){const S=g.sides[s],O=g.sides[1-s],foe=O.lastLine.length?O.l
  S.line=out;let best=-1,bv=-1;S.offer.forEach((c,i)=>{if(c.cout<=S.mana){const v=val(c.fx)/(1+c.cout*.15);if(v>bv){bv=v;best=i;}}});
  if(best>=0&&S.offer[best].cout<S.mana-0&&S.offer.some(c=>c.cout===S.mana+1)&&g.rng()<.3)best=-1;
  const c=S.offer[best];let pos=S.line.length;if(c){if(def(c.fx)>atk(c.fx)){const sl=slots.find(x=>x<=S.line.length&&def((S.line[x]||{fx:{}}).fx)<def(c.fx));pos=sl==null?S.line.length:sl;}else{for(let i=0;i<=S.line.length;i++){const p=S.line[i-1];if(p&&p.b!==c.b&&(c.fx.relais||g.rng()<.4)){pos=i;break;}}}}
- buy(g,s,best,pos);}
+ let sac=null;if(c&&S.line.length>=P.CAP){let mv=1e9;S.line.forEach((x,i)=>{if(!x.ultime){const v=val(x.fx);if(v<mv){mv=v;sac=i;}}});if(val(c.fx)<=mv*1.1)best=-1;else if(pos>S.line.length-1)pos=S.line.length;}
+ buy(g,s,best,pos,sac);}
 // ---- combat ----
 const ev=(g,e)=>g.ev.push(e),alive=T=>T.filter(t=>t.hp>0);
 function checkEnd(g){for(let s=0;s<2;s++)if(!alive(g.sides[s].team).length){g.over=true;g.winner=1-s;g.log.push(s===1?'🏆 Victoire !':'💀 Défaite…');ev(g,{t:'end',w:1-s});return true;}return false;}
@@ -112,7 +115,7 @@ function playRound(g){if(g.over)return;g.round++;g.ev=[];g.log.push('— Manche 
   let ord=[0,1].filter(s=>c[s]);if(ord.length===2){const d=c[0].cout-c[1].cout;ord=d<0?[0,1]:d>0?[1,0]:((g.round+i)%2?[0,1]:[1,0]);}
   for(const s of ord){if(g.over)break;play(g,s,c[s],c[1-s]);}ev(g,{t:'slotEnd',i});}
  if(!g.over&&g.round>=P.BRUME){const n=P.BK*(g.round-P.BRUME+1);ev(g,{t:'brume',n});g.log.push('☁ Brume du Fané : '+n+' dégâts perçants à chaque Bibbit.');
-  for(const s of (g.round%2?[0,1]:[1,0]))for(const t of alive(g.sides[s].team)){hurt(g,s,t,n,true);if(checkEnd(g))break;}}
+  for(const s of (g.round%2?[0,1]:[1,0]))for(const t of alive(g.sides[s].team)){hurt(g,s,t,n,true,-1);if(checkEnd(g))break;}}
  // fin de manche : boucliers, provocation, élan, gel s'effacent ; l'Ultime chargé entre en tête de ligne ; les Ultimes joués partent.
  g.sides.forEach((S,s)=>{S.line=S.line.filter(c=>!c.ultime);S.elan=0;S.chill=0;S.team.forEach((t,i)=>{t.block=0;t.guard=0;t.thorns=0;
   if(!g.over&&t.hp>0&&!t.ultDone&&t.ult>=P.ULT){t.ultDone=true;const u=BIBBITS[t.k].ult;S.line.unshift(mk(i,t.el,[u[0],u[1],0],{ultime:true}));ev(g,{t:'ult',s,i,nom:u[0]});g.log.push('✨ '+t.nom+' : Ultime « '+u[0]+' » prêt pour la prochaine manche !');}});});
@@ -121,4 +124,4 @@ function fxText(f){const p=[];if(f.dmg)p.push('Attaque '+(f.hits?f.hits+' × ':'
  if(f.block)p.push('Bouclier '+f.block+' sur soi');if(f.ally)p.push('Protège l\'allié : bouclier '+f.ally);if(f.shieldAll)p.push('Bouclier '+f.shieldAll+' à toute l\'équipe');if(f.guard)p.push('Provocation : attire toutes les attaques ennemies jusqu\'à la fin de la manche');
  if(f.thorns)p.push('Épines '+f.thorns+' : renvoie '+f.thorns+' à chaque coup reçu');if(f.heal)p.push('Soin '+f.heal+' à l\'allié le plus blessé');if(f.healAll)p.push('Soin '+f.healAll+' à toute l\'équipe');
  if(f.elan)p.push('Élan '+f.elan+' : +'+f.elan+' à la prochaine attaque alliée');if(f.chill)p.push('Gel '+f.chill+' : −'+f.chill+' à la prochaine attaque ennemie');if(f.relais)p.push('Relais +'+f.relais+' si la carte d\'avant vient de ton allié');if(f.drain)p.push('Vol de vie : se soigne de la moitié des dégâts');return p.join(' · ');}
-return{BIBBITS,COMBOS,P,newGame,startPlanning,buy,aiPlan,playRound,fxText,shuffle,val,atk,def};});
+return{tier,MAXC,TIERN,count,BIBBITS,COMBOS,P,newGame,startPlanning,buy,aiPlan,playRound,fxText,shuffle,val,atk,def};});
