@@ -127,19 +127,88 @@ html,body{margin:0;height:100%;background:var(--ink);color:var(--parch);font-fam
 .unit .art{height:84px;margin-top:3px}.unit .hp{margin-top:0;height:19px}.unit .hp span{line-height:18px;font-size:13px}
 .col.sac{cursor:pointer}.col.sac .mc{box-shadow:0 0 0 2px #ff6a4a}
 @media (max-width:400px){.mc{width:58px}.strip{gap:3px}}
+/* ===== v9 : vraies cartes ===== */
+#top{height:44px;gap:10px;padding:4px 10px}
+#round{flex:none;font:800 17px Cinzel;color:var(--gold2)}
+#phase{flex:1;font:600 13px Cinzel;color:#e9d9a8;border-left:1px solid var(--gold);padding-left:10px;white-space:nowrap}
+.mn{width:42px;height:38px;border-radius:6px;border:1.5px solid var(--gold);background:#0b0907cc;color:var(--gold2);font-size:22px;cursor:pointer}
+#menu{z-index:85;justify-content:flex-start;align-items:flex-end;padding:48px 10px;background:#0b0907aa}
+#menu .sheet{width:240px;background:#16110bf6;border:1.5px solid var(--gold);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#menu .sheet button{font:800 15px Cinzel;color:var(--gold2);text-align:left;padding:12px;border-radius:8px;background:#0b0907;border:1px solid #c9a24a66;cursor:pointer}
+#menu .sheet span{color:var(--parch);font-weight:600}
+.team{gap:10px;padding:0 10px}
+.unit{border-radius:6px;background:#0b0907}
+.unit .art{height:58px!important;margin-top:3px}.unit .hp{height:19px}.ug{height:13px}.ug span{font-size:9px;line-height:11px}
+.unit .chips{top:auto;bottom:3px;flex-direction:row}
+.chip{border-radius:0;border:none;clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);background:#1b140c;padding:2px 9px;font-size:12px}
+.lbl{padding:3px 12px 0;font-size:9.5px}
+.strip{gap:0!important;overflow:visible;justify-content:center;height:104px;padding:7px 6px 0;align-items:flex-start}
+.rc{position:relative;background:none!important;border:none!important;overflow:visible!important;aspect-ratio:5/7;height:auto!important;border-radius:7%/5%;color:#1b140c;padding:0;flex:none;cursor:pointer;
+ box-shadow:0 1px 0 #b8924a,0 2px 0 #8a6a30,0 3px 0 #5a4320,0 4px 0 #2a1d0e,0 7px 12px #000c}
+.mc.rc{--w:62px;width:62px;transform:translateY(calc(var(--dy,0px) + var(--lift,0px))) rotate(var(--r,0deg)) scale(var(--sc,1));transform-origin:50% 160%;transition:transform .25s,filter .3s,box-shadow .25s;opacity:1}
+#eline .mc{transform-origin:50% -60%}
+.bc.rc{--w:112px;width:112px}
+.rc .ar{position:absolute;left:5.3%;right:6%;top:4.2%;height:51.5%;background-repeat:no-repeat;border-radius:2px}
+.rc .ar:after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 10px #000b}
+.rc .fr{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;pointer-events:none}
+.rc .cost{position:absolute;left:12.5%;top:9.7%;transform:translate(-50%,-50%);width:auto;height:auto;background:none;clip-path:none;font:800 calc(var(--w)*.2)/1 Cinzel;color:#fff3c0;text-shadow:0 0 5px var(--c),0 1px 0 #000;font-style:normal}
+.rc .nb{position:absolute;left:4%;right:4%;top:44%;height:19.5%;display:flex;align-items:center;justify-content:center;text-align:center;font:700 12px/.92 'Cormorant Garamond';color:#f3d27a;background:linear-gradient(#0b090700,#0b0907e0 28%,#0b0907e0);padding:2px 2px 0;overflow:hidden;text-shadow:0 1px 0 #000}
+.bc.rc .nb{font:800 12px/1 Cinzel;top:50%;height:13.5%}
+.rc .tb{position:absolute;left:6%;right:6%;top:65%;bottom:5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.rc .fx{display:flex;gap:3px;align-items:baseline;font:800 calc(var(--w)*.27)/1 Cinzel;white-space:nowrap}
+.rc .fx b+b{font-size:.62em}.rc .fx b:nth-child(n+3){display:none}.bc.rc .fx b:nth-child(3){display:inline;font-size:.5em}
+.rc .kw{position:static;background:none!important;color:#4a3618!important;font:700 italic calc(var(--w)*.165)/1 'Cormorant Garamond';padding:0;white-space:nowrap}
+.bc.rc .kw{font-size:15px}
+.rc .who{right:8%;top:6%;font-size:10px}
+.rc .cnt{top:auto;bottom:38%;right:8%;font-size:9px}.bc.rc .cnt{font-size:11px}
+.mc.rc.ult,.bc.rc.ult{box-shadow:0 2px 0 #8a6a30,0 4px 0 #2a1d0e,0 0 0 2px #ffe17a,0 0 16px #ffd23a}
+.mc.back{width:62px;height:87px;border-radius:5px;border:2px solid var(--gold);box-shadow:0 2px 0 #5a4320,0 4px 0 #2a1d0e,0 6px 10px #000c;background:radial-gradient(circle,#3a2a14 20%,#120d08 70%);transform:translateY(var(--dy,0)) rotate(var(--r,0deg));transform-origin:50% -60%}
+.mc.rc.now{--lift:-12px;--sc:1.1;z-index:30!important;box-shadow:0 1px 0 #b8924a,0 2px 0 #8a6a30,0 4px 0 #2a1d0e,0 0 0 2px #fff6d0,0 0 18px #f3d27a}
+#eline .mc.rc.now{--lift:12px}
+.mc.rc.pick{--lift:-12px;z-index:30!important;box-shadow:0 2px 0 #8a6a30,0 4px 0 #2a1d0e,0 0 0 2.5px #9fe08a,0 0 16px #7fe07a}
+.mc.rc.done{filter:brightness(.45) saturate(.4)}
+.mc.rc.sac:before{content:'⇄';position:absolute;z-index:4;inset:0;display:grid;place-items:center;font:800 26px Cinzel;color:#fff;text-shadow:0 0 6px #c0301a,0 0 2px #000;background:#c0301a33;border-radius:inherit;box-shadow:inset 0 0 0 2px #ff6a4a}
+.strip .gap{width:24px;height:87px;margin:0 4px!important;z-index:40;background:#0b0907aa}
+#mid{gap:6px}
+#clash{flex-direction:row;gap:10px;order:1}#clash .vs{font:800 18px Cinzel;color:var(--gold);writing-mode:horizontal-tb}
+#cap{order:2;width:100%;border:none;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);border-radius:0;background:linear-gradient(90deg,#0b090700,#0b0907ee 12%,#0b0907ee 88%,#0b090700)}
+#shop{order:3;gap:8px}
+.tags,.tags.l{left:50%;right:auto;top:-22px;transform:translateX(-50%);flex-direction:row;align-items:center;z-index:5}
+.sum{background:none;border:none;font:italic 700 15px 'Cormorant Garamond';color:#e9d9a8;padding:0}.sum b{color:var(--gold2);font-style:normal}
+#shopinfo{font:600 15px Cinzel;color:var(--gold2);gap:8px}
+#mana{width:36px;height:36px;font-size:19px;background:radial-gradient(circle at 35% 30%,#9fd4ff,#1d5fb0 45%,#0a2350)}
+#offer{gap:12px;align-items:flex-end;padding-top:6px}
+#offer .bc.rc{--w:100px;width:100px}
+#offer .bc:nth-child(1){transform:rotate(-4deg) translateY(4px)}#offer .bc:nth-child(3){transform:rotate(4deg) translateY(4px)}
+#offer .bc.poor{filter:grayscale(.85) brightness(.5)}
+#offer .bc.sel{transform:translateY(-10px);box-shadow:0 2px 0 #8a6a30,0 4px 0 #2a1d0e,0 0 0 3px #9fe08a,0 0 26px #7fe07a}
+#stage{overflow:clip}#stage.cam #clash{transform:none}#shop{gap:4px!important}#offer{padding-top:2px}#offer .bc.rc{--w:96px;width:96px}.sum{font-size:14px}
+.hint{font:600 13px 'Cormorant Garamond';text-align:center;padding:0 12px}
+#act{min-height:66px;gap:12px;padding:6px 12px 10px}
+#act .btn{flex:1;height:54px;font-size:20px;letter-spacing:2px;border-radius:12px}
+#act .btn.dim{filter:grayscale(.7) brightness(.6)}
+.lnk{font:700 15px 'Cormorant Garamond';color:var(--gold2);text-decoration:underline;white-space:nowrap;cursor:pointer;text-align:center;line-height:1.1}
 </style></head><body>
 <div id="stage">
- <div id="top"><span id="round" class="t">Bibbits · Duel</span><button class="btn sm ghost" id="spd" onclick="toggleSpeed()">1×</button><button class="btn sm ghost" id="mute" onclick="toggleMute()">🔊</button><button class="btn sm ghost" onclick="help(true)">?</button><button class="btn sm ghost" onclick="decks(0)">Decks</button><button class="btn sm ghost" onclick="$('log').textContent=CAPLOG.join('\n');$('log').classList.toggle('on');$('log').scrollTop=1e9">Journal</button><button class="btn sm ghost" onclick="restart()">↺</button></div>
+ <div id="top"><span id="round" class="t">Bibbits</span><span id="phase" class="t">Duel</span><button class="mn" onclick="menu()" aria-label="Menu">☰</button></div>
+ <div class="team" id="t1"></div>
  <div class="lbl"><span>Ligne ennemie</span><span id="elbl"></span></div>
  <div class="strip" id="eline"></div>
- <div class="team" id="t1"></div>
  <div id="mid"><div id="cap"><div class="cn"></div><div class="ct"></div></div><div id="clash"></div><div id="shop"></div></div>
- <div class="team" id="t0"></div>
- <div class="lbl"><span>Ta ligne de combat</span><span id="plbl"></span></div>
+ <div class="lbl"><span id="plblL">Ta ligne</span><span id="plbl"></span></div>
  <div class="strip" id="pline"></div>
+ <div class="team" id="t0"></div>
  <div id="act"></div>
  <div id="log"></div>
  <div class="ov" id="pick"></div>
+ <div class="ov" id="menu" onclick="if(event.target===this)menu(false)"><div class="sheet">
+  <button onclick="menu(false);$('log').textContent=CAPLOG.join('\n');$('log').classList.toggle('on');$('log').scrollTop=1e9">📜 Journal</button>
+  <button onclick="if(g){menu(false);decks(0)}">🃏 Decks</button>
+  <button onclick="toggleSpeed()">⏩ Vitesse : <span id="spd"></span></button>
+  <button onclick="toggleMute()">🔊 Son : <span id="mute"></span></button>
+  <button onclick="menu(false);help(true)">❓ Aide &amp; mots-clés</button>
+  <button onclick="if(!busy||!g||g.over){menu(false);startTutorial()}">🎓 Tutoriel</button>
+  <button onclick="menu(false);restart()">↺ Nouvelle partie</button></div></div>
  <div class="ov" id="decks"></div><div class="ov" id="ins"></div><div class="ov" id="kwpop"></div>
  <div class="ov" id="end"><h1></h1><p id="endp"></p><button class="btn" onclick="restart()">Rejouer</button></div>
  <div class="ov" id="help"><div class="box"><h2>Comment jouer</h2>
@@ -198,7 +267,7 @@ function renderShop(){const P=g.sides[0];$('clash').innerHTML='';$('cap').style.
  $('shop').innerHTML=(g.round?summary():'')+`<div id="shopinfo"><div id="mana">${P.mana}</div><div>Achète <b>1</b> carte (mana ${P.mana})<br><small>maintiens une carte pour lire son effet</small></div></div><div id="offer">`+P.offer.map((c,i)=>big(c,0,(c.cout>P.mana?'poor':'')+(i===offerSel?' sel':''))).join('')+`</div>`;
  $('offer').querySelectorAll('.bc').forEach((el,i)=>el.onclick=()=>{const c=P.offer[i];if(c.cout>P.mana){shake(el);float(el,'Pas assez de mana','#9fd4ff');return}if(D.count(P,c)>=D.MAXC[D.tier(c)]){float(el,'Limite atteinte','#ff9a7a');return}offerSel=i;swapSel=null;renderShop();openIns()})}
 function renderAct(){$('act').innerHTML=(bought?'':`<button class="btn ghost" onclick="skipBuy()">Garder ma mana</button>`)+`<button class="btn" onclick="fight()">⚔ Combattre</button>`}
-function planning(){setTimeout(tutTip,400);busy=false;D.startPlanning(g);offerSel=null;swapSel=null;bought=false;$('round').textContent='Manche '+(g.round+1)+' · prépa';syncUnits();renderE();renderP();renderShop();renderAct();
+function planning(){setTimeout(tutTip,400);busy=false;D.startPlanning(g);offerSel=null;swapSel=null;bought=false;setRound(g.round+1,'Préparation');syncUnits();renderE();renderP();renderShop();renderAct();
  $('eline').onscroll=()=>{$('pline').scrollLeft=$('eline').scrollLeft};}
 function place(pos){$('ins').classList.remove('on');const P=g.sides[0],c=P.offer[offerSel];D.buy(g,0,offerSel,pos);newId=c.id;offerSel=null;bought=1;renderP();renderShop();renderAct()}
 function skipBuy(){D.buy(g,0,-1,0);offerSel=null;bought=2;renderP();renderShop();renderAct()}
@@ -209,14 +278,14 @@ async function fight(){if(busy||g.over)return;busy=true;if(!bought)D.buy(g,0,-1,
  D.playRound(g);$('shop').innerHTML='';$('act').innerHTML='';swapSel=null;
  // on révèle la ligne ennemie de cette manche
  $('eline').innerHTML=g.sides[1].lastLine.map((c,i)=>mini(c,1,i)).join('');$('elbl').textContent='manche '+g.round;
- $('pline').innerHTML=g.sides[0].lastLine.map((c,i)=>mini(c,0,i)).join('');$('plbl').textContent='';$('round').textContent='Manche '+g.round+' · combat';
+ $('pline').innerHTML=g.sides[0].lastLine.map((c,i)=>mini(c,0,i)).join('');$('plbl').textContent='';setRound(g.round,'Combat');
  MVP={};for(const e of g.ev)await step9(e);if(!g.over)await recap();
  $('log').textContent=CAPLOG.join('\n');
  if(g.over){busy=false;$('end').querySelector('h1').textContent=g.winner===0?'Victoire !':'Défaite…';$('endp').textContent='en '+g.round+' manches';setTimeout(()=>$('end').classList.add('on'),600/SPEED);return}
  planning()}
 async function step0(e){const {t,s,i}=e;switch(t){
  case 'round':banner('Manche '+e.r+'<small>toutes les cartes rejouent</small>',1100);await wait(1000);break;
- case 'slot':{[0,1].forEach(k=>{const m=stripCard(k,e.i);if(m){m.classList.add('now');m.scrollIntoView({inline:'center',block:'nearest'})}if(e.i>0){const p=stripCard(k,e.i-1);if(p){p.classList.remove('now');p.classList.add('done')}}});
+ case 'slot':{[0,1].forEach(k=>{const m=stripCard(k,e.i);if(m){m.classList.add('now')}if(e.i>0){const p=stripCard(k,e.i-1);if(p){p.classList.remove('now');p.classList.add('done')}}});
   $('clash').innerHTML=(e.c[1]?'<div class="cw">'+big(e.c[1],1)+'</div>':'<div class="bc" style="visibility:hidden"></div>')+`<div class="vs">#${e.i+1}</div>`+(e.c[0]?'<div class="cw">'+big(e.c[0],0)+'</div>':'<div class="bc" style="visibility:hidden"></div>');
   const cs=$('clash').querySelectorAll('.bc');clashEl=[cs[1],cs[0]];clashEl.forEach((el,k)=>el.animate([{opacity:0,transform:`translateY(${k?-40:40}px) scale(.5) rotateY(90deg)`},{opacity:1,transform:'none'}],{duration:450/SPEED,easing:'cubic-bezier(.2,.9,.3,1.2)'}));await wait(500);break}
  case 'play':{const el=clashEl[s];U(s,e.i).classList.add('act');const tg=document.createElement('div');tg.className='tags'+(s?'':' l');el.parentNode.appendChild(tg);tg.innerHTML=e.tags.map(x=>`<span>${x}</span>`).join('');
@@ -283,7 +352,7 @@ async function step(e){const {t,s,i}=e;
  case 'ko':cap(`☠ ${nm(s,i)} est K.-O. ! Ses cartes ne joueront plus.`);break;
  case 'brume':cap(`☁ Brume du Fané : ${e.n} dégâts perçants à chaque Bibbit`,'Brume du Fané');await step0(e);await learn('brume');return;
  case 'ult':{const t2=g.sides[s].team[i],c=g.sides[s].line.find(c=>c.ultime&&c.b===i);setUlt(s,i,t2.ult,true);await learn('ult');
-   await popup(`<h2>✨ Ultime prêt — ${t2.nom} (${s?'ennemi':'toi'})</h2><div style="display:flex;justify-content:center;margin:8px">${c?big(c,s):''}</div><p>${c?D.fxText(c.fx):''}</p><p><small>Elle jouera en <b>tête de ligne</b> à la prochaine manche, une seule fois, puis disparaît.</small></p>`);return}
+   banner('✨ Ultime prêt — '+t2.nom+'<small>'+(c?'« '+c.nom+' » jouera en tête de ligne':'')+'</small>',1700);await wait(1600);return}
  }
  await step0(e);
  if(t==='slotEnd'&&MODES[MODE].step&&!g.over)await waitTap();}
@@ -316,7 +385,7 @@ function draftPick(k){DR.me.push(k);const left=DR.off.filter(x=>x!==k),free=K.fi
  const msg=`L'IA prend <b>${D.BIBBITS[a].nom}</b>.`;if(DR.me.length<2){draftOffer();$('pick').insertAdjacentHTML('beforeend',`<div class="t" style="color:#ff9a7a">${msg}</div>`)}else{const m=DR.me,ai=DR.ai;DR=null;startGame(m,ai)}}
 function freePick(){const P=$('pick');P.innerHTML=`<div class="t" style="font-size:20px;color:var(--gold2)">Choix libre</div><div>Choisis 2 Bibbits (doublon permis) · ${choice.map(k=>D.BIBBITS[k].nom).join(' + ')||'—'}</div><div class="opts">`+K.map(k=>heroOpt(k,'pickT')).join('')+`</div>`}
 function pickT(k){choice.push(k);if(choice.length<2)return freePick();const c=choice;choice=[];startGame(c,[rnd(K),rnd(K)])}
-function startGame(me,ai){g=D.newGame(me,ai);CAPLOG.length=0;CAPLOG.push('L\'IA joue '+ai.map(k=>D.BIBBITS[k].nom).join(' + ')+'.');$('pick').classList.remove('on');
+function startGame(me,ai){g=D.newGame(me,ai);CAPLOG.length=0;POPN=0;CAPLOG.push('L\'IA joue '+ai.map(k=>D.BIBBITS[k].nom).join(' + ')+'.');$('pick').classList.remove('on');
  [0,1].forEach(s=>{$('t'+s).innerHTML=g.sides[s].team.map((t,i)=>unitHTML(t,s,i)).join('')+`<div class="side" id="side${s}"></div>`});syncUnits();if(!localStorage.bb7help)help(true);planning()}
 
 // ===================== v8 + : ligne max 6, caméra, héros, sons, bilan, tutoriel =====================
@@ -329,7 +398,7 @@ function openIns(){const P=g.sides[0],O=g.sides[1],c=P.offer[offerSel],E=O.lastL
 function sacrifice(i){$('ins').classList.remove('on');const P=g.sides[0],c=P.offer[offerSel],old=P.line[i];D.buy(g,0,offerSel,i,i);newId=c.id;offerSel=null;bought=1;CAPLOG.push('Tu sacrifies « '+old.nom+' » pour « '+c.nom+' ».');sfx('ko');renderP();renderShop();renderAct()}
 // ---- sons (WebAudio généré) + vibration ----
 let MUTE=localStorage.bb8mute==='1',AC=null;
-function toggleMute(){MUTE=!MUTE;localStorage.bb8mute=MUTE?'1':'0';$('mute').textContent=MUTE?'🔇':'🔊'}
+function toggleMute(){MUTE=!MUTE;localStorage.bb8mute=MUTE?'1':'0';$('mute').textContent=MUTE?'coupé':'activé'}
 function tone(f,d,type='sine',v=.2,f2,delay=0){const t=AC.currentTime+delay,o=AC.createOscillator(),gn=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);gn.gain.setValueAtTime(v,t);gn.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(gn).connect(AC.destination);o.start(t);o.stop(t+d)}
 function noise(d,v=.25,hp=800){const t=AC.currentTime,b=AC.createBuffer(1,AC.sampleRate*d,AC.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=(Math.random()*2-1)*(1-i/x.length);const s=AC.createBufferSource(),f=AC.createBiquadFilter(),gn=AC.createGain();f.type='highpass';f.frequency.value=hp;s.buffer=b;gn.gain.value=v;s.connect(f).connect(gn).connect(AC.destination);s.start(t)}
 function sfx(k,n=0){if(MUTE)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
@@ -354,9 +423,9 @@ async function recap(){const m=Object.values(MVP).sort((a,b)=>(b.d+b.b+b.h)-(a.d
  await popup(`<h2>Fin de la manche ${g.round}</h2><p style="font-size:20px;text-align:center">${eq?'Manche égale':win?'🏆 Manche gagnée':'Manche perdue'}</p><p style="text-align:center">Dégâts infligés <b style="color:#ff9a7a">${RS[1]}</b> · subis <b style="color:#9fe08a">${RS[0]}</b></p>`+(m?`<p style="text-align:center;margin-bottom:2px"><b>MVP</b> (${m.s?'ennemi':'toi'})</p><div style="display:flex;justify-content:center">${big(m.c,m.s)}</div><p style="text-align:center">${[m.d&&m.d+' dégâts',m.b&&m.b+' bouclier',m.h&&m.h+' soin'].filter(Boolean).join(' · ')||'—'}</p>`:''),'Continuer');MVP={}}
 // ---- tutoriel ----
 let TUT=null;
-const TIPS=['<h2>Tutoriel 1/6 · La ligne</h2><p>En bas : <b>ta ligne de combat</b>. À chaque manche, <b>toutes</b> tes cartes rejouent, une par une : ta carte n° 1 contre la n° 1 ennemie, puis n° 2…</p><p>Pas d\'achat pour l\'instant : touche <b>⚔ Combattre</b> et regarde.</p>',
+const TIPS=['<h2>Tutoriel 1/6 · La ligne</h2><p>En bas : <b>ta ligne de combat</b>. À chaque manche, <b>toutes</b> tes cartes rejouent, une par une : ta carte n° 1 contre la n° 1 ennemie, puis n° 2…</p><p>Pas d\'achat pour l\'instant : touche <b>Prêt ⚔</b> et regarde.</p>',
  '<h2>Tutoriel 2/6 · Réordonner</h2><p>Tu vois maintenant l\'<b>ordre ennemi</b> en haut. Touche <b>2 cartes</b> de ta ligne pour les échanger : mets ton <b>bouclier</b> en face de leur <b>attaque</b>.</p>',
- '<h2>Tutoriel 3/6 · Acheter</h2><p>Au centre : 3 cartes à acheter avec ta <b>mana</b> (le chiffre bleu). Touche-en une, puis un <b>+</b> pour la placer. Ta ligne est limitée à <b>6 cartes</b> : ensuite, il faut en <b>sacrifier</b> une.</p><p>Le petit compteur « 1/3 » = exemplaires dans ta ligne / maximum.</p>',
+ '<h2>Tutoriel 3/6 · Acheter</h2><p>Au centre : 3 cartes à acheter avec ta <b>mana</b> (le chiffre bleu). Touche-en une, puis un <b>+</b> dans ta ligne pour la placer. Ta ligne est limitée à <b>6 cartes</b> : ensuite, il faut en <b>sacrifier</b> une.</p><p>Le petit compteur « 1/3 » = exemplaires dans ta ligne / maximum.</p>',
  '<h2>Tutoriel 4/6 · Gel</h2><p>Krom joue du <b>❄ Gel</b> : la <b>prochaine attaque</b> de ton équipe dans la manche fait −X dégâts. Contre ça, place une petite carte juste après son Gel pour « encaisser » le malus.</p>',
  '<h2>Tutoriel 5/6 · Provocation</h2><p><b>🛡 Provocation</b> (Granit) : ce Bibbit attire <b>toutes</b> les attaques ennemies jusqu\'à la fin de la manche. Il protège Brok, qui frappe fort mais est fragile. Joue-la tôt dans ta ligne !</p>',
  '<h2>Tutoriel 6/6 · Ultime</h2><p>La <b>jauge violette ✦</b> se remplit avec les <b>dégâts reçus</b>. Pleine (15) : la carte Ultime du Bibbit entre en <b>tête de ligne</b> pour une manche, une seule fois. Touche la jauge pour lire l\'Ultime.</p><p>Tu sais tout : gagne la partie !</p>'];
@@ -365,5 +434,38 @@ function startTutorial(){Object.keys(localStorage).filter(k=>k.startsWith('bb8kw
 function tutTip(){if(!TUT||!g||g.over)return;const r=g.round;if(r>=TIPS.length||TUT[r])return;TUT[r]=1;const o=$('kwpop');o.innerHTML=`<div class="box">${TIPS[r]}<br><button class="btn">OK</button> <button class="btn ghost sm" id="skipT">Passer le tutoriel</button></div>`;o.classList.add('on');o.querySelector('.btn').onclick=()=>o.classList.remove('on');$('skipT').onclick=()=>{TUT=null;localStorage.bb8tut=1;o.classList.remove('on')};if(r===TIPS.length-1){TUT=null;localStorage.bb8tut=1}}
 function teamPick(){const P=$('pick');P.classList.add('on');P.innerHTML=`<div class="t" style="font-size:24px;color:var(--gold2)">Bibbits · Duel</div>${localStorage.bb8tut?'':'<div style="font-size:16px;color:#ffe17a">Première partie ? Commence par le tutoriel !</div>'}<button class="btn" onclick="startTutorial()">Tutoriel</button><div style="font-size:15px;max-width:320px">Une partie guidée : un mécanisme à la fois.</div><button class="btn" onclick="startDraft()">Draft</button><div style="font-size:15px;max-width:320px">On t'offre 3 Bibbits, tu en prends 1, puis l'IA choisit. On alterne jusqu'à 2 chacun.</div><button class="btn ghost" onclick="freePick()">Choix libre</button>`}
 
-if(!window.__EMBED){$('mute').textContent=MUTE?'🔇':'🔊';$('spd').textContent=MODES[MODE].n;dragScroll($('eline'));dragScroll($('pline'));teamPick()}
+// ===================== v9 : vraies cartes, menu, préparation en place =====================
+const CROPS={"atrefeu":[[20,20],[60,20],[0,28],[0,100],[40,28]],"aurel":[[10,20],[0,36],[40,20],[70,20],[30,36],[10,52]],"brok":[[20,20],[60,20],[0,28],[0,100],[40,28]],"caillouteux":[[0,20],[30,20],[100,20],[60,20],[80,28]],"frimousson":[[0,20],[30,20],[10,36],[100,20],[70,20],[0,52]],"granit":[[0,20],[30,20],[100,20],[60,20],[80,28]],"krom":[[0,20],[30,20],[10,36],[100,20],[70,20],[0,52]],"lamecume":[[90,20],[100,36],[50,20],[70,28],[80,44],[0,20]],"lumignon":[[10,20],[0,36],[40,20],[70,20],[30,36],[10,52]],"lune":[[0,28],[0,60],[100,20]],"marea":[[90,20],[100,36],[50,20],[70,28],[80,44],[0,20]],"ninnelune":[[0,28],[0,60],[100,20]],"nyx":[[50,20]],"petardeau":[[0,20],[40,20],[10,36],[0,52],[100,20]],"petrol":[[100,28],[80,20],[50,20],[0,20],[90,44],[70,36]],"ronceline":[[90,20],[100,36]],"sylve":[[90,20],[100,36]],"tisonnet":[[100,28],[80,20],[50,20],[0,20],[90,44],[70,36]],"veillombre":[[50,20]],"zephyr":[[0,20],[40,20],[10,36],[0,52],[100,20]]};
+const hsh=s=>{let h=7;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)};
+function artStyle(img,nom){const L=CROPS[img.split('/').pop().replace('.webp','')]||[[50,60]],p=L[hsh(nom)%L.length];return `background-image:url(${img});background-size:230% auto;background-position:${p[0]}% ${p[1]}%`}
+function cardHTML(c,s,cls,i,isBig){CARD[c.id]=[c,s];const h=hero(s,c),k=c.ultime?'Ultime':kw(c.fx).split(' · ')[0];
+ return `<div class="${isBig?'bc':'mc'} rc ${cls} ${c.ultime?'ult':''}" data-tip="${c.id}"${i>=0?` data-i="${i}"`:''} style="--c:${HEX[c.el]}"><div class="ar" style="${artStyle(h.img,c.nom)}"></div><img class="fr" src="img/card_frame.webp" alt=""><i class="cost">${c.ultime?'✦':c.cout}</i>${isBig?`<span class="who">${h.nom}</span>`:''}${cntTag(c,s)}<div class="nb">${c.nom}</div><div class="tb"><div class="fx">${chips(c.fx)}</div><div class="kw">${k}</div></div></div>`}
+function mini(c,s,i,cls=''){return cardHTML(c,s,cls,i,false)}
+function big(c,s,cls=''){return cardHTML(c,s,cls,-1,true)}
+function fan(id){const el=$(id),cs=[...el.children],n=cs.length,flip=id==='eline';if(!n)return;const W=el.clientWidth-26,w=62,ov=n>1?Math.min(-2,(W-n*w)/(n-1)):0;
+ cs.forEach((c,k)=>{const t=n>1?k/(n-1)*2-1:0;c.style.setProperty('--r',(flip?-1:1)*t*7+'deg');c.style.setProperty('--dy',(flip?-1:1)*t*t*7+'px');if(!c.classList.contains('gap'))c.style.marginLeft=k?ov+'px':'0';c.style.zIndex=k+1})}
+['eline','pline'].forEach(id=>new MutationObserver(()=>fan(id)).observe($(id),{childList:true}));addEventListener('resize',()=>{fan('eline');fan('pline')});
+function setRound(n,ph){$('round').textContent='Manche '+n;$('phase').textContent=ph}
+function menu(on=!$('menu').classList.contains('on')){$('menu').classList.toggle('on',on)}
+function refresh(){renderP();renderShop();renderAct()}
+function summary(){const w=RS[1]>RS[0],eq=RS[1]===RS[0];return `<div class="sum">Manche ${g.round} ${eq?'égale':w?'gagnée':'perdue'} · <b>${RS[1]}</b> infligés · <b>${RS[0]}</b> subis</div>`}
+function renderShop(){const P=g.sides[0];$('clash').innerHTML='';$('cap').style.visibility='hidden';const full=P.line.length>=D.P.CAP;let h=g.round?summary():'';
+ if(bought){$('shop').innerHTML=h+`<div id="shopinfo"><div id="mana">${P.mana}</div><div>${bought===1?'Carte ajoutée !':'Mana gardée (+1)'}</div></div><div class="hint">Touche 2 cartes de ta ligne pour les échanger, puis <b>Prêt</b>.</div>`;return}
+ const sel=offerSel!=null?P.offer[offerSel]:null;
+ h+=`<div id="shopinfo"><div id="mana">${P.mana}</div><div>${sel?'« '+sel.nom+' » choisie':'Boutique · achète 1 carte'}</div></div><div id="offer">`+P.offer.map((c,i)=>big(c,0,((c.cout>P.mana||(sel&&i!==offerSel))?'poor':'')+(i===offerSel?' sel':''))).join('')+`</div><div class="hint">${sel?(full?'<b style="color:#ff9a7a">Ligne pleine.</b> Touche la carte à <b>remplacer</b> ⇄':'Touche un <b>+</b> dans ta ligne pour la placer'):'Touche 2 cartes de ta ligne pour les échanger · maintiens pour lire'}</div>`;
+ $('shop').innerHTML=h;
+ $('offer').querySelectorAll('.bc').forEach((el,i)=>el.onclick=()=>{const c=P.offer[i];if(offerSel===i){offerSel=null;return refresh()}if(c.cout>P.mana){shake(el);float(el,'Pas assez de mana','#9fd4ff');return}if(D.count(P,c)>=D.MAXC[D.tier(c)]){float(el,'Limite atteinte','#ff9a7a');return}offerSel=i;swapSel=null;refresh()})}
+function renderP(){const P=g.sides[0],full=P.line.length>=D.P.CAP,ins=offerSel!=null&&!full,sac=offerSel!=null&&full;let h='';
+ P.line.forEach((c,i)=>{if(ins)h+=`<div class="gap" onclick="place(${i})">+</div>`;h+=mini(c,0,i,(i===swapSel?'pick':'')+(c.id===newId?' new':'')+(sac&&!c.ultime?' sac':''))});if(ins)h+=`<div class="gap" onclick="place(${P.line.length})">+</div>`;
+ $('pline').innerHTML=h;$('pline').querySelectorAll('.mc').forEach(el=>el.onclick=()=>tapLine(+el.dataset.i));
+ $('plblL').textContent='Ta ligne · '+P.line.length+'/'+D.P.CAP;$('plbl').innerHTML=sac?'<span style="color:#ff9a7a">choisis la carte à remplacer</span>':ins?'touche un + pour placer':'n° 1 joue d’abord'}
+function tapLine(i){if(busy)return;const P=g.sides[0];if(offerSel!=null){if(P.line.length>=D.P.CAP&&!P.line[i].ultime)sacrifice(i);return}
+ if(swapSel==null){swapSel=i;return renderP()}if(swapSel===i){swapSel=null;return renderP()}const L=P.line;[L[swapSel],L[i]]=[L[i],L[swapSel]];swapSel=null;renderP()}
+function renderAct(){$('act').innerHTML=offerSel!=null?`<button class="btn dim" disabled>Prêt ⚔</button><a class="lnk" onclick="offerSel=null;refresh()">Annuler</a>`:`<button class="btn" id="ready" onclick="fight()">Prêt ⚔</button>`+(bought?'':`<a class="lnk" id="skip" onclick="skipBuy()">Passer<br>(+1 mana)</a>`)}
+let POPN=0;addEventListener('scroll',()=>{if(scrollY||scrollX)scrollTo(0,0)});$('stage').addEventListener('scroll',e=>{e.target.scrollTop=0;e.target.scrollLeft=0});
+async function learn(k){if(localStorage['bb8kw_'+k]||!KW[k])return;localStorage['bb8kw_'+k]=1;if(POPN>=3){cap(`<b style="color:#ffe17a">${KW[k][0]}</b> : ${KW[k][1]}`);await wait(1200);return}POPN++;await popup(`<h2>Nouveau : ${KW[k][0]}</h2><p>${KW[k][1]}</p>`,'Compris')}
+async function recap(){const m=Object.values(MVP).sort((a,b)=>(b.d+b.b+b.h)-(a.d+a.b+a.h))[0],win=RS[1]>RS[0],eq=RS[1]===RS[0];
+ banner(`${eq?'Manche égale':win?'🏆 Manche gagnée':'Manche perdue'}<small>${RS[1]} infligés · ${RS[0]} subis${m?' · MVP « '+m.c.nom+' »':''}</small>`,1900);await wait(1800);MVP={}}
+
+if(!window.__EMBED){$('mute').textContent=MUTE?'coupé':'activé';$('spd').textContent=MODES[MODE].n;dragScroll($('eline'));dragScroll($('pline'));teamPick()}
 </script></body></html>
