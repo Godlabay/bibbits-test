@@ -1,4 +1,4 @@
-// Bibbits — Duel v7 : toute la ligne de combat rejoue à chaque manche, emplacement par emplacement.
+// Bibbits — Duel v10 : ligne qui rejoue, et 2 échanges gratuits par manche (chaque échange de plus coûte 1 mana).
 (function(root,f){if(typeof module==='object')module.exports=f();else root.Duel=f();})(this,function(){
 const H=(nom,f,el,hp,role,cartes,ult)=>({nom,el,hp,role,img:'img/heroes/'+f+'.webp',cartes,ult});
 const BIBBITS={
@@ -47,7 +47,7 @@ const COMBOS=[['Eau','Braise','Vapeur',{dmg:2}],['Braise','Foudre','Surcharge',{
  ['Sève','Roc','Racines profondes',{block:3}],['Sève','Eau','Rosée',{heal:3}],['Givre','Foudre','Orage glacé',{dmg:2}],['Aube','Crépuscule','Éclipse',{pierce:2}],
  ['Roc','Braise','Magma',{dmg:3}],['Eau','Givre','Verglas',{chill:2}],['Braise','Sève','Cendres fertiles',{heal:3}],['Aube','Sève','Lumière vive',{heal:3}],
  ['Crépuscule','Givre','Nuit glaciale',{chill:2}],['Roc','Aube','Rempart sacré',{block:3}],['Foudre','Crépuscule','Orage noir',{dmg:2}]];
-const P={CAP:6,BK:4,HPX:1.3,ULT:15,BRUME:7,MANA0:2,MANA_CAP:9};
+const P={CAP:6,BK:4,HPX:1.3,ULT:15,BRUME:7,MANA0:2,MANA_CAP:9,SWAP_FREE:2,SWAP_COST:1};
 let uid=0;
 const mk=(b,el,c,ex)=>Object.assign({id:++uid,b,el,nom:c[0],fx:c[1],cout:c[2]||0,key:b+':'+c[0]},ex||{});
 const tier=c=>c.cout>=4?3:c.cout===3?2:1, MAXC=[0,3,2,1], TIERN=['','commune','rare','élite'];
@@ -67,15 +67,27 @@ function buy(g,s,idx,pos,sac){const S=g.sides[s];if(idx>=0&&S.line.length>=P.CAP
 const val=f=>(f.dmg||0)*(f.hits||1)+(f.pierce||0)*1.2+(f.splash||0)*.8+(f.block||0)*.7+(f.ally||0)*.8+(f.shieldAll||0)*1.4+(f.heal||0)*.9+(f.healAll||0)*1.7+(f.elan||0)*.8+(f.chill||0)*.8+(f.guard?2:0)+(f.thorns||0)*1.2+(f.relais||0)*.6+(f.drain?2:0);
 const atk=f=>(f.dmg||0)*(f.hits||1)+(f.pierce||0)+(f.splash||0);
 const def=f=>(f.block||0)+(f.ally||0)+(f.shieldAll||0)*2+(f.guard?4:0)+(f.chill||0)+(f.thorns||0);
-// IA : contre la ligne adverse révélée (défense en face des grosses attaques), puis achète la meilleure carte abordable.
+// Nombre minimum d'échanges (transpositions) pour passer de line à ideal.
+function cycleSwaps(line,ideal){const idx=new Map();ideal.forEach((c,i)=>idx.set(c,i));const perm=line.map(c=>idx.get(c)),seen=new Uint8Array(perm.length);let cyc=0;
+ for(let i=0;i<perm.length;i++){if(seen[i]||perm[i]==null)continue;let j=i,guard=0;while(j!=null&&!seen[j]&&guard++<20){seen[j]=1;j=perm[j];}cyc++;}return perm.length-cyc;}
+// Réordonne vers ideal en dépensant d'abord les échanges gratuits, puis 1 mana chacun, sans descendre sous reserve.
+function reorderBudget(S,ideal,reserve,priority){let used=0,paid=0;const line=S.line,pri=(priority||[]).slice();let guard=0;
+ while(guard++<12){let i=-1;for(const p of pri)if(line[p]!==ideal[p]){i=p;break;}if(i<0)i=line.findIndex((c,idx)=>c!==ideal[idx]);if(i<0)break;
+  const j=line.indexOf(ideal[i]);if(j<0||j===i)break;const cost=used>=P.SWAP_FREE?P.SWAP_COST:0;if(S.mana-cost<reserve||cost>S.mana)break;
+  [line[i],line[j]]=[line[j],line[i]];S.mana-=cost;used++;if(cost)paid++;}
+ S.swapUsed=used;S.swapPaid=paid;return used;}
+// IA : défense en face des grosses attaques, dans la limite des échanges, puis achat.
 function aiPlan(g,s){const S=g.sides[s],O=g.sides[1-s],foe=O.lastLine.length?O.lastLine:O.line;
  const L=S.line.slice().sort((a,b)=>def(b.fx)-def(a.fx));const slots=[...Array(L.length).keys()].sort((a,b)=>atk((foe[b]||{fx:{}}).fx)-atk((foe[a]||{fx:{}}).fx));
  const nd=L.filter(c=>def(c.fx)>atk(c.fx)).length,out=Array(L.length);slots.slice(0,nd).forEach((sl,k)=>out[sl]=L[k]);let r=L.slice(nd);for(let i=0;i<out.length;i++)if(!out[i])out[i]=r.shift();
- // relais : essaye d'alterner les deux Bibbits
- S.line=out;let best=-1,bv=-1;S.offer.forEach((c,i)=>{if(c.cout<=S.mana){const v=val(c.fx)/(1+c.cout*.15);if(v>bv){bv=v;best=i;}}});
- if(best>=0&&S.offer[best].cout<S.mana-0&&S.offer.some(c=>c.cout===S.mana+1)&&g.rng()<.3)best=-1;
- const c=S.offer[best];let pos=S.line.length;if(c){if(def(c.fx)>atk(c.fx)){const sl=slots.find(x=>x<=S.line.length&&def((S.line[x]||{fx:{}}).fx)<def(c.fx));pos=sl==null?S.line.length:sl;}else{for(let i=0;i<=S.line.length;i++){const p=S.line[i-1];if(p&&p.b!==c.b&&(c.fx.relais||g.rng()<.4)){pos=i;break;}}}}
+ let best=-1,bv=-1;S.offer.forEach((c,i)=>{if(c.cout<=S.mana){const v=val(c.fx)/(1+c.cout*.15);if(v>bv){bv=v;best=i;}}});
+ const keep=best>=0?S.offer[best]:null,extra=Math.max(0,cycleSwaps(S.line,out)-P.SWAP_FREE)*P.SWAP_COST;
+ reorderBudget(S,out,keep&&extra>0&&S.mana-extra<keep.cout?keep.cout:0,slots);
+ best=-1;bv=-1;S.offer.forEach((c,i)=>{if(c.cout<=S.mana){const v=val(c.fx)/(1+c.cout*.15);if(v>bv){bv=v;best=i;}}});
+ if(best>=0&&S.offer[best].cout<S.mana&&S.offer.some(c=>c.cout===S.mana+1)&&g.rng()<.3)best=-1;
+ const c=best>=0?S.offer[best]:null;let pos=S.line.length;if(c){if(def(c.fx)>atk(c.fx)){const sl=slots.find(x=>x<=S.line.length&&def((S.line[x]||{fx:{}}).fx)<def(c.fx));pos=sl==null?S.line.length:sl;}else{for(let i=0;i<=S.line.length;i++){const p=S.line[i-1];if(p&&p.b!==c.b&&(c.fx.relais||g.rng()<.4)){pos=i;break;}}}}
  let sac=null;if(c&&S.line.length>=P.CAP){let mv=1e9;S.line.forEach((x,i)=>{if(!x.ultime){const v=val(x.fx);if(v<mv){mv=v;sac=i;}}});if(val(c.fx)<=mv*1.1)best=-1;else if(pos>S.line.length-1)pos=S.line.length;}
+ if(!S.swapUsed){S.swapUsed=0;S.swapPaid=0;}
  buy(g,s,best,pos,sac);}
 // ---- combat ----
 const ev=(g,e)=>g.ev.push(e),alive=T=>T.filter(t=>t.hp>0);
@@ -124,4 +136,4 @@ function fxText(f){const p=[];if(f.dmg)p.push('Attaque '+(f.hits?f.hits+' × ':'
  if(f.block)p.push('Bouclier '+f.block+' sur soi');if(f.ally)p.push('Protège l\'allié : bouclier '+f.ally);if(f.shieldAll)p.push('Bouclier '+f.shieldAll+' à toute l\'équipe');if(f.guard)p.push('Provocation : attire toutes les attaques ennemies jusqu\'à la fin de la manche');
  if(f.thorns)p.push('Épines '+f.thorns+' : renvoie '+f.thorns+' à chaque coup reçu');if(f.heal)p.push('Soin '+f.heal+' à l\'allié le plus blessé');if(f.healAll)p.push('Soin '+f.healAll+' à toute l\'équipe');
  if(f.elan)p.push('Élan '+f.elan+' : +'+f.elan+' à la prochaine attaque alliée');if(f.chill)p.push('Gel '+f.chill+' : −'+f.chill+' à la prochaine attaque ennemie');if(f.relais)p.push('Relais +'+f.relais+' si la carte d\'avant vient de ton allié');if(f.drain)p.push('Vol de vie : se soigne de la moitié des dégâts');return p.join(' · ');}
-return{tier,MAXC,TIERN,count,BIBBITS,COMBOS,P,newGame,startPlanning,buy,aiPlan,playRound,fxText,shuffle,val,atk,def};});
+return{tier,MAXC,TIERN,count,BIBBITS,COMBOS,P,newGame,startPlanning,buy,aiPlan,playRound,fxText,shuffle,val,atk,def,cycleSwaps,reorderBudget};});
