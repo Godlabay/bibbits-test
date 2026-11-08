@@ -11,6 +11,10 @@ button{font:inherit;color:inherit;cursor:pointer}
     linear-gradient(180deg,#07110eef 0%,#0c1612e0 24%,#101612c4 50%,#070c0af5 78%,#070c0af8 100%),
     url(img/board.webp) center 22%/cover no-repeat}
 #view{position:absolute;inset:0;display:flex;flex-direction:column;padding:10px 12px 12px}
+#view.in{animation:rise .32s ease}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+button{transition:transform .12s ease,filter .12s ease}
+button:active{transform:translateY(2px) scale(.98)}
 .anton{font-family:Anton,sans-serif;font-weight:400;letter-spacing:.04em}
 h1,h2{font-family:Anton,sans-serif;font-weight:400;margin:0;letter-spacing:.04em}
 
@@ -102,9 +106,25 @@ h1,h2{font-family:Anton,sans-serif;font-weight:400;margin:0;letter-spacing:.04em
 .orb{width:84px;height:84px;border-radius:50%;border:3px solid var(--gold);display:grid;place-items:center;font-family:Anton,sans-serif;font-size:28px;color:var(--gold);box-shadow:0 0 24px #e6c56a66,inset 0 0 12px #e6c56a33;animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{50%{transform:scale(1.05)}}
 
-.combat .rows{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
-.crow{display:flex;gap:6px;justify-content:center;align-items:flex-end}
-.crow .ucard{width:78px}
+.arena{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;min-height:0;padding:4px 0}
+.crow{display:flex;gap:6px;justify-content:center;align-items:flex-end;min-height:118px}
+.cslot{width:74px;position:relative;flex:none}
+.cslot .ucard{width:74px}
+.cslot.hold{min-height:108px}
+.ucard.actor,.ucard.target{box-shadow:inset 0 2px 0 #fff8,0 0 0 2px #f0d48a,0 6px 0 #1a1208}
+.cap{position:relative;z-index:30;min-height:22px;margin:14px 36px 0;padding:6px 8px;text-align:center;font-family:Anton,sans-serif;font-size:16px;letter-spacing:.03em;color:#f7f1e4;background:#14110ee8;border:2px solid #6e5a38;border-radius:12px;box-shadow:inset 0 1px 0 #fff2,0 3px 0 #000}
+.spd{border-radius:12px;border:2px solid #6e5a38;background:#16130f;color:#f4efe4;font-family:Anton,sans-serif;font-size:20px;min-width:64px;padding:8px 10px;box-shadow:inset 0 1px 0 #fff3,0 3px 0 #000}
+.spd.on{border-color:#ffe08a;color:#ffe08a}
+.hrail{position:absolute;left:6px;right:6px;top:-8px;height:5px;border-radius:4px;background:#1a140c;overflow:hidden;z-index:4}
+.hrail i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ffb087,#e25b3a)}
+.impact{position:absolute;width:56px;height:56px;border-radius:50%;pointer-events:none;z-index:9;background:radial-gradient(circle,#fff 0,#f6e2a8 42%,transparent 72%)}
+.footer-note{text-align:center;padding-top:4px}
+.footer-note .anton{font-size:13px;letter-spacing:.14em}
+.fuse{position:absolute;inset:0;z-index:40;display:grid;place-items:center;background:#070c0acc;pointer-events:none}
+.fuse b{font-family:Anton,sans-serif;font-size:40px;color:#ffe08a;letter-spacing:.08em;text-shadow:0 4px 0 #6a4a18}
+.float.tip{color:#ffe08a;font-size:28px}
+.ucard.pop{animation:popin .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes popin{from{transform:scale(.82);opacity:.5}to{transform:none;opacity:1}}
 
 .result{position:absolute;inset:0;display:flex;flex-direction:column;padding:20px 16px;background:linear-gradient(#07110ef0,#070c0af8);text-align:center}
 .result h1{font-size:48px;color:var(--gold);margin:12px 0}

@@ -99,9 +99,9 @@ function fight(you,foe){
       if(!living(other).length) return;
       const ti=pickTarget(other,i);
       const t=other[ti];
-      t.hp-=u.atk;
-      log.push({side,from:i,to:ti,dmg:u.atk,hp:t.hp,dead:t.hp<=0});
-      if(t.hp<=0) t.hp=0;
+      const before=t.hp;
+      t.hp=Math.max(0,t.hp-u.atk);
+      log.push({attackId:log.length,side,from:i,to:ti,dmg:u.atk,srcName:u.name,tgtName:t.name,hpBefore:before,hpAfter:t.hp,max:t.max||t.hp,dead:t.hp<=0});
     });
   };
   let guard=0;
@@ -117,22 +117,24 @@ function cardHTML(h,opt){
   opt=opt||{};
   const name=(opt.name||h.name||'').toUpperCase();
   const golden=opt.golden;
-  return `<div class="ucard${golden?' gold':''}${opt.sel?' sel':''}${opt.dead?' dead':''}" data-k="${opt.k||''}" data-i="${opt.i!=null?opt.i:''}" style="--el:${golden?'#ffe08a':(h.el||'#e6c56a')}">
+  return `<div class="ucard${golden?' gold':''}${opt.sel?' sel':''}${opt.dead?' dead':''}" ${opt.id?'id="'+opt.id+'"':''} data-k="${opt.k||''}" data-i="${opt.i!=null?opt.i:''}" style="--el:${golden?'#ffe08a':(h.el||'#e6c56a')}">
     <img class="art" alt="" src="${ART}${(h.id||h)}.png">
     ${golden?'<div class="tag">FUSION OR</div>':''}
     ${h.taunt&&!opt.hide?'<div class="tag taunt">PROVOC</div>':''}
     <div class="nm">${name}</div>
     <div class="badge atk">${opt.atk!=null?opt.atk:h.atk}</div>
-    <div class="badge hp">${opt.hp!=null?opt.hp:h.hp}</div>
+    <div class="badge hp" data-hp>${opt.hp!=null?opt.hp:h.hp}</div>
   </div>`;
 }
 function slotHTML(u,i){
   if(!u) return `<div class="slot" data-slot="${i}"><div class="empty" data-slot="${i}"><span>+</span>EMPLACEMENT</div></div>`;
   return `<div class="slot" data-slot="${i}">${cardHTML(u,{i,k:'team',golden:u.golden,atk:u.atk,hp:u.hp,name:u.name})}</div>`;
 }
-function hpBlock(label,name,hero,hp){
+function hpBlock(label,name,hero,hp,barId){
   const pct=Math.max(0,Math.min(100,hp/15*100));
-  return `<div class="who"><img class="avatar" alt="" src="${ART}${hero}.png"><div class="meta"><div class="kicker">${label}</div><div class="nm">${name}</div><div class="bar"><i style="width:${pct}%"></i></div></div><div class="hpnum">${Math.max(0,hp)}<small>/15 PV</small></div></div>`;
+  const id=barId?` id="${barId}"`:'' ;
+  const nid=barId?` id="${barId}n"`:'';
+  return `<div class="who"><img class="avatar" alt="" src="${ART}${hero}.png"><div class="meta"><div class="kicker">${label}</div><div class="nm">${name}</div><div class="bar"><i${id} style="width:${pct}%"></i></div></div><div class="hpnum"${nid}><span>${Math.max(0,hp)}</span><small>/15 PV</small></div></div>`;
 }
 function applySkin(){document.body.classList.toggle('skin-ink',!!(P.skin&&P.wins>=2))}
 
@@ -224,13 +226,13 @@ async function enterRoom(id,you){
 }
 function onRoom(row){
   if(!M||M.bot||M.room!==row.id) return;
-  const prev=M.phase;
+  const prev=M.phase, prevHp1=M.hp1, prevHp2=M.hp2;
   M.row=row; M.phase=row.phase; M.round=row.round; M.hp1=row.p1_hp; M.hp2=row.p2_hp;
   M.ends=new Date(row.shop_ends).getTime();
   M.oppName=M.you==='p1'?row.p2_name:row.p1_name;
   const fo=M.you==='p1'?row.p2_state:row.p1_state;
   if(fo&&fo.board) M.foe=fo;
-  if(row.phase==='combat'&&prev!=='combat'&&row.combat){M.combat=row.combat;playCombat()}
+  if(row.phase==='combat'&&prev!=='combat'&&row.combat){M.hpShown={p1:prevHp1,p2:prevHp2};M.combat=row.combat;playCombat()}
   else if(row.phase==='result'&&prev!=='result') showResult(row.winner);
   else if(row.phase==='shop'&&prev==='combat'){nextLocalShop();renderShop()}
   else if(row.phase==='shop') renderShop();
@@ -260,8 +262,8 @@ function renderShop(){
   if(!M) return;
   const left=Math.max(0,M.ends-Date.now());
   const foeReady=M.bot?M.foeReady:(M.row&&(M.you==='p1'?M.row.p2_ready:M.row.p1_ready));
-  view().innerHTML=`<div class="top"><button class="iconbtn" id="back">‹</button><div class="brand">BIBBITS</div><div class="live">PVP · EN DIRECT</div></div>
-    ${hpBlock('ADVERSAIRE',M.oppName,M.oppHero,oppHp())}
+  view().innerHTML=`<div class="top"><button class="iconbtn" id="back">‹</button><div class="brand">BIBBITS</div><div class="live">${M.bot?'CONTRE UN BOT':'PVP · EN DIRECT'}</div></div>
+    ${hpBlock(M.bot?'BOT':'ADVERSAIRE',M.oppName,M.oppHero,oppHp(),'oppbar')}
     <div class="roundrow"><div class="plaque"><div class="k">MANCHE ${String(M.round).padStart(2,'0')}</div><div class="v">RECRUTEMENT</div></div>
       <div class="plaque" style="text-align:right"><div class="k">FIN DANS</div><div class="v" id="time">${fmt(left)}</div></div></div>
     <div class="shop-scroll">
@@ -278,14 +280,19 @@ function renderShop(){
     </div>
     <div class="dock">
     <div class="sell" id="sell" data-sell="1">VENDRE · GLISSEZ ICI · 1 PIÈCE</div>
-    ${hpBlock('VOTRE HÉROS',byId[P.hero].name,P.hero,myHp())}
+    ${hpBlock('VOTRE HÉROS',byId[P.hero].name,P.hero,myHp(),'mybar')}
     <button class="ready" id="ready" ${M.ready?'disabled':''}>PRÊT<small>${foeReady?'Adversaire prêt · ':' '}Combat dès que les deux sont prêts.</small></button>
     </div>`;
-  $('#back').onclick=()=>{if(confirm('Quitter le match ?')){stopNet();M=null;screenMenu()}};
+  $('#back').onclick=()=>{combatToken++; if(confirm('Quitter le match ?')){stopNet();M=null;screenMenu()}};
   $('#reroll').onclick=()=>{if(reroll(M.me,M.round)){push(false);renderShop()}};
   $('#freeze').onclick=()=>{M.me.freeze=!M.me.freeze;push(false);renderShop()};
   $('#ready').onclick=()=>goCombat();
   bindBoard();
+  if(M.flash==='merge') fuseShow();
+  else if(M.flash==='buy'){const el=document.querySelector('.teamgrid .ucard'); if(el) el.classList.add('pop')}
+  else if(M.flash==='sell') floatTip('+'+M.sellN, document.getElementById('sell'));
+  M.flash=null;
+  kick();
 }
 function bindBoard(){
   view().querySelectorAll('[data-shop]').forEach(el=>{
@@ -325,13 +332,21 @@ function tryBuy(shopIndex,slot){
     const copies=M.me.board.filter(u=>u&&u.id===h.id&&!u.golden).length;
     if(copies<2){
       M.me.gold-=h.cost; M.me.board[slot]=makeUnit(h,false); M.me.shop[shopIndex]=null;
-      push(false); renderShop(); return;
+      M.flash='buy'; push(false); renderShop(); return;
     }
   }
+  const willMerge=M.me.board.filter(u=>u&&u.id===h.id&&!u.golden).length>=2;
   if(!buy(M.me,shopIndex)) return;
+  M.flash=willMerge?'merge':'buy';
   push(false); renderShop();
 }
-function sellUnit(i){sell(M.me,i);if(M.sel===i)M.sel=null;push(false);renderShop()}
+function sellUnit(i){
+  const u=M.me.board[i]; if(!u) return;
+  const gain=u.golden?2:1;
+  sell(M.me,i); if(M.sel===i) M.sel=null;
+  M.flash='sell'; M.sellN=gain;
+  push(false); renderShop();
+}
 function swap(a,b){if(a===b)return;const t=M.me.board[a];M.me.board[a]=M.me.board[b];M.me.board[b]=t;push(false);renderShop()}
 function flash(sel){const n=$(sel);if(n){n.animate([{transform:'translateX(-3px)'},{transform:'translateX(3px)'},{transform:'none'}],{duration:220})}}
 
@@ -363,82 +378,218 @@ async function hostBegin(){
   let hp1=data.p1_hp, hp2=data.p2_hp;
   if(M.you==='p1'){hp1-=dYou;hp2-=dFoe}else{hp2-=dYou;hp1-=dFoe}
   const win=hp1<=0&&hp2<=0?'draw':hp1<=0?'p2':hp2<=0?'p1':null;
-  const log={you:youBoard,foe:foeBoard,steps:sim.log,dYou,dFoe,youSide:M.you};
+  const log={you:youBoard,foe:foeBoard,steps:sim.log,dYou,dFoe,youSide:M.you,aliveYou:sim.a,aliveFoe:sim.b};
   await sb.rpc('duel_begin',{rid:M.room,p:P.id,log,hp1,hp2,win});
 }
 function resolveLocal(){
   const sim=fight(M.me.board.filter(Boolean),M.foe.board.filter(Boolean));
   const dYou=sim.b>0?heroDmg(M.round,sim.b):0;
   const dFoe=sim.a>0?heroDmg(M.round,sim.a):0;
+  M.hpShown={p1:M.hp1,p2:M.hp2};
   M.hp1-=dYou; M.hp2-=dFoe;
   M.phase='combat';
-  M.combat={you:M.me.board.filter(Boolean),foe:M.foe.board.filter(Boolean),steps:sim.log,dYou,dFoe,youSide:'p1'};
+  M.combat={you:M.me.board.filter(Boolean),foe:M.foe.board.filter(Boolean),steps:sim.log,dYou,dFoe,youSide:'p1',aliveYou:sim.a,aliveFoe:sim.b};
   playCombat();
 }
 
+let spd=+(localStorage.bbSpd||1), combatToken=0;
+const reduceMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function shownMine(){if(!M.hpShown) return myHp(); return M.you==='p1'?M.hpShown.p1:M.hpShown.p2}
+function shownOpp(){if(!M.hpShown) return oppHp(); return M.you==='p1'?M.hpShown.p2:M.hpShown.p1}
+function kick(){const v=view(); v.classList.remove('in'); void v.offsetWidth; v.classList.add('in')}
+function fuseShow(){const n=document.createElement('div'); n.className='fuse'; n.innerHTML='<b>FUSION OR</b>'; view().appendChild(n); setTimeout(()=>n.remove(),900)}
+function floatTip(text,el){if(!el) return; const r=el.getBoundingClientRect(); const f=document.createElement('div'); f.className='float tip'; f.textContent=text; f.style.left=(r.left+r.width/2)+'px'; f.style.top=r.top+'px'; document.body.appendChild(f); f.animate([{opacity:1,transform:'translate(-50%,0)'},{opacity:0,transform:'translate(-50%,-28px)'}],{duration:700}).onfinish=()=>f.remove()}
 function playCombat(){
   if(!M||!M.combat||busy) return;
   busy=true;
+  const token=++combatToken;
   const c=M.combat;
   const writer=c.youSide||'p1';
   const mine=M.bot||M.you===writer?c.you:c.foe;
   const opp=mine===c.you?c.foe:c.you;
-  view().innerHTML=`<div class="top"><button class="iconbtn" id="back">‹</button><div class="brand">BIBBITS</div><div class="live">PVP · EN DIRECT</div></div>
-    ${hpBlock('ADVERSAIRE',M.oppName,M.oppHero,oppHp())}
+  const burst=Math.max(1,(c.steps||[]).length/18);
+  const slot=(u,i,side)=>`<div class="cslot" data-i="${i}">${u?cardHTML(u,{golden:u.golden,atk:u.atk,hp:u.hp,name:u.name,id:(side==='you'?'y':'f')+i}):''}</div>`;
+  view().innerHTML=`<div class="top"><button class="iconbtn" id="back">‹</button><div class="brand">BIBBITS</div><div class="live">${M.bot?'CONTRE UN BOT':'PVP · EN DIRECT'}</div></div>
+    ${hpBlock(M.bot?'BOT':'ADVERSAIRE',M.oppName,M.oppHero,shownOpp(),'oppbar')}
     <div class="roundrow"><div class="plaque"><div class="k">MANCHE ${String(M.round).padStart(2,'0')}</div><div class="v">COMBAT</div></div>
-      <div class="plaque" style="text-align:right"><div class="k">AUTO</div><div class="v" id="ctime">00:12</div></div></div>
-    <div class="combat" style="position:relative;flex:1;display:flex;flex-direction:column">
-      <div class="sec"><span>ÉQUIPE ADVERSE</span></div>
-      <div class="crow" id="crowf">${(opp||[]).filter(Boolean).map(u=>cardHTML(u,{k:'bf',uid:u.uid,golden:u.golden,atk:u.atk,hp:u.hp,name:u.name})).join('')||'<div class="tiny">—</div>'}</div>
-      <div class="sec"><span>VOTRE ÉQUIPE</span><b>${(mine||[]).some(u=>u&&u.golden)?'FUSION OR ACTIVE':''}</b></div>
-      <div class="crow" id="crowy">${(mine||[]).filter(Boolean).map(u=>cardHTML(u,{k:'by',golden:u.golden,atk:u.atk,hp:u.hp,name:u.name})).join('')||'<div class="tiny">—</div>'}</div>
-      <svg class="bolts" id="bolts"></svg>
-      <div style="margin-top:auto;text-align:center"><div class="anton" style="font-size:14px;letter-spacing:.12em">COMBAT EN COURS</div><div class="tiny">Les recrues combattent toutes seules.</div></div>
-    </div>`;
-  const steps=c.steps||[];
-  const stepMs=Math.max(280,Math.min(700,Math.round(11000/Math.max(4,steps.length))));
-  let n=0;
-  const units={you:[...(mine||[])].filter(Boolean).map(u=>Object.assign({},u)),foe:[...(opp||[])].filter(Boolean).map(u=>Object.assign({},u))};
-  const tick=()=>{
-    const el=document.getElementById('ctime');
-    if(el) el.textContent='00:'+String(Math.max(0,Math.ceil((steps.length-n)*stepMs/1000))).padStart(2,'0');
-    if(n>=steps.length||(window.__HOLD&&n>=1)){if(!window.__HOLD)finishCombat(c);return}
-    let s=steps[n++];
-    if(!M.bot&&M.you!==(c.youSide||'p1')) s=Object.assign({},s,{side:s.side==='you'?'foe':'you'});
-    const side=s.side==='you'?units.you:units.foe;
-    const other=s.side==='you'?units.foe:units.you;
-    const atk=side.filter(u=>u&&u.hp>0)[0]||side[s.from];
-    const list=(s.side==='you'?units.you:units.foe);
-    const enemies=(s.side==='you'?units.foe:units.you);
-    const target=enemies.filter(u=>u)[s.to]||enemies.find(u=>u&&u.hp>0);
-    if(target){target.hp=Math.max(0,target.hp-s.dmg);pulse(s)}
-    setTimeout(tick,stepMs);
-  };
-  setTimeout(tick,400);
+      <button class="spd${spd===2?' on':''}" id="spd">${spd}×</button></div>
+    <div class="arena" id="arena">
+      <div class="sec"><span>ÉQUIPE ADVERSE</span><b>${burst>1?'RYTHME ACCÉLÉRÉ':''}</b></div>
+      <div class="crow" id="crowf">${(opp||[]).map((u,i)=>slot(u,i,'foe')).join('')||'<div class="tiny">—</div>'}</div>
+      <div class="cap" id="cap">Une attaque à la fois</div>
+      <div class="sec"><span>VOTRE ÉQUIPE</span></div>
+      <div class="crow" id="crowy">${(mine||[]).map((u,i)=>slot(u,i,'you')).join('')||'<div class="tiny">—</div>'}</div>
+      <svg class="bolts" id="bolts"><defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#f0d48a"/></marker></defs></svg>
+    </div>
+    <div class="footer-note"><div class="anton">UNE ATTAQUE À LA FOIS</div><div class="tiny">Le héros ne perd des PV qu'à la fin de la manche.</div></div>`;
+  $('#spd').onclick=()=>{spd=spd===2?1:2; localStorage.bbSpd=spd; $('#spd').textContent=spd+'×'; $('#spd').classList.toggle('on',spd===2)};
+  $('#back').onclick=()=>{combatToken++; busy=false; if(confirm('Quitter le match ?')){stopNet();M=null;screenMenu()}};
+  const steps=(c.steps||[]).map(s=>{
+    if(!M.bot&&M.you!==writer) return Object.assign({},s,{side:s.side==='you'?'foe':'you'});
+    return s;
+  });
+  (async()=>{
+    for(const s of steps){
+      if(token!==combatToken) return;
+      await runAttack(s,token,burst);
+      if(window.__HOLD) return;
+    }
+    if(token!==combatToken||window.__HOLD) return;
+    await resolveRound(c,token);
+  })();
 }
-function pulse(s){
-  document.body.classList.add('shake');setTimeout(()=>document.body.classList.remove('shake'),220);
-  const row=document.getElementById(s.side==='you'?'crowy':'crowf');
-  const other=document.getElementById(s.side==='you'?'crowf':'crowy');
-  if(!row||!other) return;
-  const a=row.children[Math.min(s.from,row.children.length-1)];
-  const b=other.children[Math.min(s.to,other.children.length-1)];
-  if(!a||!b) return;
-  const ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
-  const f=document.createElement('div');f.className='float';f.textContent='-'+s.dmg;
-  f.style.left=(rb.left+rb.width/2)+'px';f.style.top=(rb.top+rb.height/2)+'px';
-  document.body.appendChild(f);
-  f.animate([{opacity:0,transform:'translate(-50%,-30%) scale(.4)'},{opacity:1,transform:'translate(-50%,-70%) scale(1.15)',offset:.3},{opacity:0,transform:'translate(-50%,-120%)'}],{duration:600}).onfinish=()=>f.remove();
-  const svg=document.getElementById('bolts');
-  if(svg){
-    const box=svg.getBoundingClientRect();
-    const x1=ra.left+ra.width/2-box.left,y1=ra.top+ra.height/2-box.top,x2=rb.left+rb.width/2-box.left,y2=rb.top+rb.height/2-box.top;
-    svg.innerHTML=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f4e2a8" stroke-width="3" stroke-linecap="round"/>`;
-    setTimeout(()=>{if(svg)svg.innerHTML=''},220);
-  }
-  if(s.dead) b.classList.add('dead');
-  b.classList.add('hit');
+function easeOut(p){return 1-Math.pow(1-Math.max(0,Math.min(1,p)),3)}
+function stagePoint(el){
+  const stage=document.getElementById('arena').getBoundingClientRect();
+  const r=el.getBoundingClientRect();
+  return {x:r.left+r.width/2-stage.left,y:r.top+r.height/2-stage.top,r};
 }
+function runAttack(s,token){
+  return new Promise(resolve=>{
+    const a=document.getElementById((s.side==='you'?'y':'f')+s.from);
+    const b=document.getElementById((s.side==='you'?'f':'y')+s.to);
+    const cap=document.getElementById('cap');
+    const svg=document.getElementById('bolts');
+    const arena=document.getElementById('arena');
+    if(!a||!b||!arena){resolve();return}
+    const reduce=reduceMotion();
+    if(cap) cap.textContent=s.srcName+' attaque '+s.tgtName;
+    a.classList.add('actor'); b.classList.add('target');
+    const A0=a.getBoundingClientRect(), B0=b.getBoundingClientRect();
+    const dx=(B0.left+B0.width/2)-(A0.left+A0.width/2);
+    const dy=(B0.top+B0.height/2)-(A0.top+A0.height/2);
+    const dist=Math.hypot(dx,dy)||1;
+    const reach=Math.max(24,dist-B0.height*0.46);
+    const rot=Math.max(-7,Math.min(7,dx*0.12));
+    const maxHp=s.max||Math.max(s.hpBefore,1);
+    let t=0,last=performance.now(),applied=false,num=null,rail=null;
+    function dead(){if(token!==combatToken){cleanup();resolve();return true}return false}
+    function showArrow(){
+      if(!svg) return;
+      const p1=stagePoint(a), p2=stagePoint(b);
+      const mx=(p1.x+p2.x)/2+(s.side==='you'?-16:16);
+      const my=(p1.y+p2.y)/2;
+      svg.innerHTML='<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#f0d48a"/></marker></defs><path d="M '+p1.x+' '+p1.y+' Q '+mx+' '+my+' '+p2.x+' '+p2.y+'" fill="none" stroke="#f0d48a" stroke-width="2.5" marker-end="url(#ah)"/>';
+    }
+    function impact(){
+      applied=true;
+      if(svg) svg.innerHTML='';
+      const badge=b.querySelector('[data-hp]');
+      if(badge) badge.textContent=s.hpAfter;
+      const br=b.getBoundingClientRect(), stg=arena.getBoundingClientRect();
+      const flash=document.createElement('div'); flash.className='impact';
+      flash.style.left=(br.left+br.width/2-stg.left-28)+'px';
+      flash.style.top=(br.top+6-stg.top)+'px';
+      arena.appendChild(flash);
+      setTimeout(()=>flash.remove(),70);
+      num=document.createElement('div'); num.className='float'; num.textContent='−'+s.dmg;
+      num.style.left=(br.left+br.width/2)+'px'; num.style.top=(br.top+6)+'px';
+      document.body.appendChild(num);
+      rail=document.createElement('div'); rail.className='hrail'; rail.innerHTML='<i></i>';
+      if(b.parentElement) b.parentElement.appendChild(rail);
+      const bar=rail.querySelector('i');
+      bar.style.transition='width .18s ease-out';
+      bar.style.width=(100*s.hpBefore/maxHp)+'%';
+      requestAnimationFrame(()=>{bar.style.width=(100*Math.max(0,s.hpAfter)/maxHp)+'%'});
+      b.style.transform='translateY('+(s.side==='you'?6:-6)+'px)';
+    }
+    function cleanup(){
+      a.classList.remove('actor'); b.classList.remove('target');
+      a.style.transform=''; a.style.zIndex='';
+      if(s.dead){b.style.visibility='hidden'; b.style.opacity='0'; if(rail) rail.remove()}
+      else {b.style.transform=''; if(rail) rail.remove()}
+      if(num) num.remove();
+      if(svg) svg.innerHTML='';
+    }
+    function draw(tt){
+      if(tt<120){
+        const p=easeOut(tt/120);
+        a.style.transform='translateY('+(-8*p)+'px) scale('+(1+0.03*p)+')';
+        a.style.zIndex=8;
+        showArrow();
+      }else if(tt<300 && !reduce){
+        const p=easeOut((tt-120)/180);
+        a.style.transform='translate('+(dx/dist*reach*p)+'px,'+(dy/dist*reach*p)+'px) rotate('+(rot*p)+'deg) scale(1.03)';
+        a.style.zIndex=8;
+        if(tt<275) showArrow(); else if(svg) svg.innerHTML='';
+      }
+      if(tt>=300 && !applied) impact();
+      if(num && tt>=300){
+        const p=Math.min(1,(tt-300)/200);
+        num.style.transform='translate(-50%,'+(-35*easeOut(p))+'px)';
+        num.style.opacity=String(1-p);
+      }
+      if(!s.dead && tt>440) b.style.transform='';
+      if(s.dead && tt>=480){
+        const p=Math.min(1,(tt-480)/160);
+        b.style.opacity=String(1-p);
+        b.style.filter='grayscale(1)';
+        b.style.transform='translateY('+(12*p)+'px) scale('+(1-0.04*p)+')';
+        if(cap && p>0.12) cap.textContent=s.tgtName+' éliminée';
+      }
+      if(tt>=480 && !reduce){
+        const back=1-easeOut(Math.min(1,(tt-480)/280));
+        a.style.transform='translate('+(dx/dist*reach*back)+'px,'+(dy/dist*reach*back)+'px) rotate('+(rot*back)+'deg) scale('+(1+0.03*back)+')';
+        a.style.zIndex=back>0.04?'8':'';
+      }else if(reduce && tt>=300){
+        a.style.transform='';
+      }
+      if(tt>=760){a.style.transform=''; a.style.zIndex=''}
+    }
+    function step(now){
+      if(token!==combatToken){cleanup(); resolve(); return}
+      const dt=Math.min(40,now-last); last=now;
+      const burst=(M&&M.combat&&M.combat.steps&&M.combat.steps.length>18)?M.combat.steps.length/18:1;
+      if(!(window.__HOLD&&t>=200)) t+=dt*spd*burst;
+      const tt=reduce?(t<120?t:300+Math.max(0,t-120)):t;
+      draw(tt);
+      if(window.__HOLD&&tt>=210) return;
+      if(tt>=800){cleanup(); resolve(); return}
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+async function resolveRound(c,token){
+  if(token!==combatToken||!M) return;
+  const writer=c.youSide||'p1';
+  const mineSide=M.bot||M.you===writer;
+  const dmgMe=mineSide?c.dYou:c.dFoe;
+  const dmgThem=mineSide?c.dFoe:c.dYou;
+  const mineAlive=mineSide?c.aliveYou:c.aliveFoe;
+  const oppAlive=mineSide?c.aliveFoe:c.aliveYou;
+  const cap=document.getElementById('cap');
+  let msg='Manche égale';
+  if((oppAlive||0)>0 && !(mineAlive>0)) msg='Manche perdue · '+(oppAlive||0)+' survivants · −'+(dmgMe||0)+' PV';
+  else if((mineAlive||0)>0 && !(oppAlive>0)) msg='Manche gagnée · '+(mineAlive||0)+' survivants · −'+(dmgThem||0)+' PV';
+  else if(dmgMe||dmgThem) msg='Les deux équipes tiennent';
+  if(cap) cap.textContent=msg;
+  await waitMs(650);
+  if(token!==combatToken) return;
+  const my=document.getElementById('mybar'), op=document.getElementById('oppbar');
+  const myn=document.getElementById('mybarn'), opn=document.getElementById('oppbarn');
+  if(my) my.style.width=Math.max(0,myHp()/15*100)+'%';
+  if(op) op.style.width=Math.max(0,oppHp()/15*100)+'%';
+  if(myn) myn.querySelector('span').textContent=Math.max(0,myHp());
+  if(opn) opn.querySelector('span').textContent=Math.max(0,oppHp());
+  await waitMs(500);
+  if(token!==combatToken||window.__HOLD) return;
+  finishCombat(c);
+}
+function waitMs(ms){
+  return new Promise(res=>{
+    let left=ms, last=performance.now();
+    function frame(now){
+      if(!M) return res();
+      const dt=Math.min(40,now-last); last=now;
+      left-=dt*spd;
+      if(left<=0) res(); else requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
 function finishCombat(c){
   const dYou=M.bot?c.dYou:(M.you===(c.youSide||'p1')?c.dYou:c.dFoe);
   setTimeout(async()=>{
@@ -486,6 +637,7 @@ function screenCollection(){
     <div class="tiny">Cadres : ${TIERS.slice(1).join(' · ')}</div>
     <div class="scroll tiergrid" id="grid"></div></div>`;
   $('#back').onclick=screenMenu;
+  kick();
   const g=$('#grid');
   g.innerHTML=HEROES.map(h=>`<button data-h="${h.id}" style="background:none;border:0;color:inherit">${cardHTML(h,{name:h.name})}<div class="tiny">${TIERS[tierOf(h.id)]}</div></button>`).join('');
   g.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>showHero(b.dataset.h));
@@ -533,7 +685,7 @@ window.__shot=function(name){
     foe:{gold:5,board:[makeUnit(byId.lune,false),makeUnit(byId.nyx,false),makeUnit(byId.krom,false),makeUnit(byId.granit,false),null,null],shop:[]}};
   if(name==='shop') return renderShop();
   if(name==='combat'){
-    M.combat={you:M.me.board.filter(Boolean),foe:M.foe.board.filter(Boolean),steps:[{side:'you',from:0,to:1,dmg:7,dead:false}],dYou:0,dFoe:4,youSide:'p1'};
+    M.combat={you:M.me.board.filter(Boolean),foe:M.foe.board.filter(Boolean),steps:[{side:'you',from:0,to:1,dmg:7,dead:false,srcName:'Brok',tgtName:'Nyx',hpBefore:6,hpAfter:0,max:6}],dYou:0,dFoe:4,youSide:'p1',aliveYou:4,aliveFoe:3};
     M.phase='combat';
     window.__HOLD=true;
     playCombat();
