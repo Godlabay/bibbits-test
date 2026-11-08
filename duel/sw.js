@@ -1,5 +1,5 @@
-const V='bibbits-duel-v11';
-const CORE=['./','./index.html','./styles.css','./engine.js','./app.js','./manifest.webmanifest','./icon-180.png','./icon-512.png','./img/board.webp','./img/card_frame.webp'];
+const V='bibbits-duel-v12';
+const CORE=['./','./index.html','./game.css','./game.js','./manifest.webmanifest','./icon-180.png','./icon-512.png','./img/board.webp','./img/card_frame.webp'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
 });
