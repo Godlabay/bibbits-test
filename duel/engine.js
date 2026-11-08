@@ -1,139 +1,240 @@
-// Bibbits — Duel v10 : ligne qui rejoue, et 2 échanges gratuits par manche (chaque échange de plus coûte 1 mana).
+// Bibbits Duel v11 — 6 tours, choix simultanés, ligne qui persiste, synergies.
 (function(root,f){if(typeof module==='object')module.exports=f();else root.Duel=f();})(this,function(){
-const H=(nom,f,el,hp,role,cartes,ult)=>({nom,el,hp,role,img:'img/heroes/'+f+'.webp',cartes,ult});
-const BIBBITS={
- sylve:H('Sylve','ronceline','Sève',31,'Soigneuse · Relais',[
-  ['Flèche de ronce',{dmg:3},1],['Sève vive',{heal:3},1],['Tir double',{dmg:2,hits:2},2],['Racines',{ally:4,heal:2},2],
-  ['Flèche perçante',{pierce:5},3],['Floraison',{healAll:3},3],['Volée d\'épines',{dmg:3,hits:2,relais:2},4],['Arbre-mère',{healAll:4,shieldAll:3},5]],
-  ['Pluie de ronces',{dmg:3,hits:3,healAll:5}]),
- marea:H('Maréa','lamecume','Eau',28,'Soutien · Élan',[
-  ['Onde apaisante',{heal:4},1],['Bulle',{ally:5},1],['Vague',{dmg:3,relais:2},2],['Écume dorée',{elan:4,heal:2},2],
-  ['Marée montante',{dmg:4,heal:3},3],['Courant porteur',{elan:6,ally:3},3],['Grand geyser',{dmg:5,splash:2},4],['Source sacrée',{healAll:5,shieldAll:4},5]],
-  ['Raz-de-marée',{dmg:6,splash:4,healAll:5}]),
- brok:H('Brok','atrefeu','Braise',31,'Cogneur · gros coups',[
-  ['Coup de marteau',{dmg:4},1],['Enclume levée',{block:5},1],['Forge ardente',{elan:3,block:2},2],['Braises',{pierce:3},2],
-  ['Choc sismique',{dmg:5,block:3},3],['Enchaînement',{dmg:5,relais:3},3],['Frappe en fusion',{dmg:8},4],['Marteau titan',{dmg:10,block:3},5]],
-  ['Marteau-volcan',{dmg:14,block:6}]),
- petrol:H('Pétrol','tisonnet','Braise',44,'Artificier · zone',[
-  ['Pétard',{dmg:3,splash:2},1],['Mèche courte',{pierce:2},1],['Bombe collante',{dmg:3,splash:2},2],['Barricade',{block:3,ally:3},2],
-  ['Grenade',{dmg:4,splash:3},3],['Atelier',{elan:4,block:3},3],['Baril explosif',{dmg:5,splash:4},4],['Feu d\'artifice',{dmg:4,hits:2,splash:4},5]],
-  ['Méga-bombe',{dmg:8,splash:8}]),
- granit:H('Granit','caillouteux','Roc',36,'Tank · Provocation',[
-  ['Coup de bouclier',{dmg:2,block:3},1],['Provocation',{guard:1,block:4},1],['Peau d\'épines',{block:3,thorns:1},2],['Charge',{dmg:5},2],
-  ['Rempart',{shieldAll:4,guard:1},3],['Éboulement',{dmg:5,block:3},3],['Montagne vivante',{guard:1,block:7,thorns:2},4],['Séisme',{dmg:6,splash:4},5]],
-  ['Cœur de granit',{guard:1,shieldAll:10,thorns:4}]),
- zephyr:H('Zéphyr','petardeau','Foudre',27,'Duelliste · Relais',[
-  ['Étincelle',{dmg:3},1],['Pas éclair',{block:3,elan:2},1],['Riposte',{dmg:2,hits:2},2],['Décharge',{pierce:3,relais:2},2],
-  ['Arc électrique',{dmg:3,splash:3},3],['Fente fulgurante',{dmg:2,hits:3},3],['Tonnerre',{dmg:6,relais:4},4],['Tempête',{dmg:3,hits:3,splash:3},5]],
-  ['Jugement céleste',{dmg:4,hits:4,pierce:4}]),
- krom:H('Krom','frimousson','Givre',39,'Bête de givre · Gel',[
-  ['Griffe glacée',{dmg:3},1],['Souffle froid',{chill:3,block:2},1],['Fourrure épaisse',{block:5,guard:1},2],['Morsure gelée',{dmg:3,chill:3},2],
-  ['Blizzard',{dmg:3,splash:3,chill:2},3],['Rugissement',{chill:5,elan:3},3],['Avalanche',{dmg:7,chill:3},4],['Hiver éternel',{dmg:5,chill:6,guard:1,block:4},5]],
-  ['Zéro absolu',{dmg:8,chill:10,block:6}]),
- aurel:H('Aurel','lumignon','Aube',39,'Paladin · protège son allié',[
-  ['Coup de masse',{dmg:3},1],['Lueur',{heal:3,ally:2},1],['Bouclier d\'aube',{ally:5,guard:1},2],['Châtiment',{dmg:3,pierce:2},2],
-  ['Lanterne bénie',{shieldAll:3,heal:3},3],['Frappe sacrée',{dmg:5,heal:3},3],['Aube nouvelle',{healAll:4,shieldAll:3},4],['Jugement doré',{dmg:7,heal:3,guard:1},5]],
-  ['Soleil levant',{dmg:6,healAll:6,shieldAll:4}]),
- lune:H('Lune','ninnelune','Crépuscule',28,'Assassine · Relais',[
-  ['Lame lunaire',{dmg:3,relais:2},1],['Esquive',{block:4},1],['Aiguise-lames',{elan:4,dmg:1},2],['Double entaille',{dmg:2,hits:2,relais:2},2],
-  ['Dague perfide',{pierce:5},3],['Danse des lames',{dmg:2,hits:3,drain:1},3],['Croissant fendu',{dmg:6,relais:4},4],['Éclipse tranchante',{dmg:3,hits:4},5]],
-  ['Nuit des mille lames',{dmg:3,hits:5,drain:1}]),
- nyx:H('Nyx','veillombre','Crépuscule',55,'Dragonne · garde du corps',[
-  ['Griffe d\'ombre',{dmg:3},1],['Aile protectrice',{ally:5,guard:1},1],['Morsure',{dmg:3,drain:1},2],['Écailles',{block:4,thorns:2},2],
-  ['Souffle nocturne',{dmg:3,splash:3},3],['Couvée',{shieldAll:4,heal:3},3],['Vol plané',{dmg:5,ally:4},4],['Souffle du néant',{dmg:5,splash:4,drain:1},5]],
-  ['Ailes de la nuit',{guard:1,shieldAll:8,dmg:6,splash:4}])
+const HEROES={
+  brok:{fr:'Brok',en:'Brok',el:'Braise',c:'#ff683e'},
+  sylve:{fr:'Sylve',en:'Sylve',el:'Sève',c:'#9edc63'},
+  marea:{fr:'Maréa',en:'Marea',el:'Eau',c:'#51cfff'},
+  petrol:{fr:'Pétrol',en:'Petrol',el:'Étincelle',c:'#f5e564'},
+  granit:{fr:'Granit',en:'Granit',el:'Roc',c:'#e4b35b'},
+  zephyr:{fr:'Zéphyr',en:'Zephyr',el:'Souffle',c:'#9aeafa'},
+  krom:{fr:'Krom',en:'Krom',el:'Givre',c:'#b1c9e7'},
+  aurel:{fr:'Aurel',en:'Aurel',el:'Aube',c:'#ffe6a4'},
+  lune:{fr:'Lune',en:'Lune',el:'Lune',c:'#bea4ff'},
+  nyx:{fr:'Nyx',en:'Nyx',el:'Ombre',c:'#f664a4'}
 };
-const COMBOS=[['Eau','Braise','Vapeur',{dmg:2}],['Braise','Foudre','Surcharge',{dmg:3}],['Foudre','Eau','Électrocution',{pierce:2}],['Givre','Roc','Gel fracturé',{dmg:3}],
- ['Sève','Roc','Racines profondes',{block:3}],['Sève','Eau','Rosée',{heal:3}],['Givre','Foudre','Orage glacé',{dmg:2}],['Aube','Crépuscule','Éclipse',{pierce:2}],
- ['Roc','Braise','Magma',{dmg:3}],['Eau','Givre','Verglas',{chill:2}],['Braise','Sève','Cendres fertiles',{heal:3}],['Aube','Sève','Lumière vive',{heal:3}],
- ['Crépuscule','Givre','Nuit glaciale',{chill:2}],['Roc','Aube','Rempart sacré',{block:3}],['Foudre','Crépuscule','Orage noir',{dmg:2}]];
-const P={CAP:6,BK:4,HPX:1.3,ULT:15,BRUME:7,MANA0:2,MANA_CAP:9,SWAP_FREE:2,SWAP_COST:1};
-let uid=0;
-const mk=(b,el,c,ex)=>Object.assign({id:++uid,b,el,nom:c[0],fx:c[1],cout:c[2]||0,key:b+':'+c[0]},ex||{});
-const tier=c=>c.cout>=4?3:c.cout===3?2:1, MAXC=[0,3,2,1], TIERN=['','commune','rare','élite'];
-const count=(S,c)=>S.line.filter(x=>x.key===c.key).length;
+// fx: duo N (self +N if an ally is in the line), aura N (other allies +N),
+// lien EL N (self +N if that element is allied), gel N (each enemy −N),
+// clan N (self +N per other ally of the same element).
+const RAW=[
+  ['brok','Coup de marteau','Hammer blow',1,2,null],
+  ['brok','Enclume','Anvil',1,1,['gel',1]],
+  ['brok','Forge ardente','Burning forge',2,3,['duo',2]],
+  ['brok','Braises','Embers',2,2,['clan',2]],
+  ['brok','Choc sismique','Seismic shock',3,5,null],
+  ['brok','Enchaînement','Chain strike',3,3,['aura',2]],
+  ['brok','Frappe en fusion','Fusion strike',4,5,['lien','Roc',3]],
+  ['brok','Marteau titan','Titan hammer',5,8,['duo',1]],
+  ['sylve','Flèche de ronce','Briar shot',1,2,null],
+  ['sylve','Sève vive','Living sap',1,0,['aura',1]],
+  ['sylve','Tir double','Twin shot',2,3,['duo',1]],
+  ['sylve','Racines','Roots',2,2,['lien','Eau',3]],
+  ['sylve','Flèche perçante','Piercing shot',3,5,null],
+  ['sylve','Floraison','Bloom',3,3,['aura',1]],
+  ['sylve','Volée d\'épines','Thorn volley',4,7,['clan',2]],
+  ['sylve','Arbre-mère','Mother tree',5,6,['aura',2]],
+  ['marea','Onde','Wavelet',1,2,null],
+  ['marea','Bulle','Bubble',1,1,['aura',1]],
+  ['marea','Vague','Wave',2,3,['duo',2]],
+  ['marea','Écume','Sea foam',2,2,['lien','Braise',3]],
+  ['marea','Marée','Tide',3,5,null],
+  ['marea','Courant','Current',3,4,['aura',1]],
+  ['marea','Geyser','Geyser',4,6,null],
+  ['marea','Raz-de-marée','Tidal wave',5,8,['duo',1]],
+  ['petrol','Pétard','Firecracker',1,2,['clan',1]],
+  ['petrol','Mèche','Short fuse',1,2,null],
+  ['petrol','Bombe collante','Sticky bomb',2,3,['duo',1]],
+  ['petrol','Barricade','Barricade',2,1,['gel',1]],
+  ['petrol','Grenade','Grenade',3,5,null],
+  ['petrol','Atelier','Workshop',3,2,['lien','Braise',3]],
+  ['petrol','Baril explosif','Powder keg',4,7,['duo',2]],
+  ['petrol','Feu d\'artifice','Fireworks',5,7,['aura',1]],
+  ['granit','Coup de bouclier','Shield bash',1,2,null],
+  ['granit','Provocation','Challenge',1,2,['gel',1]],
+  ['granit','Peau d\'épines','Thorn hide',2,3,['duo',1]],
+  ['granit','Charge','Charge',2,4,null],
+  ['granit','Rempart','Bulwark',3,2,['aura',2]],
+  ['granit','Éboulement','Rockslide',3,5,null],
+  ['granit','Montagne vivante','Living mountain',4,6,['gel',1]],
+  ['granit','Séisme','Quake',5,9,['lien','Braise',2]],
+  ['zephyr','Étincelle','Spark',1,2,null],
+  ['zephyr','Pas éclair','Flash step',1,1,['duo',2]],
+  ['zephyr','Riposte','Riposte',2,3,['gel',1]],
+  ['zephyr','Décharge','Discharge',2,3,['lien','Eau',2]],
+  ['zephyr','Arc électrique','Electric arc',3,5,null],
+  ['zephyr','Fente fulgurante','Lightning lunge',3,4,['duo',2]],
+  ['zephyr','Tonnerre','Thunder',4,6,null],
+  ['zephyr','Tempête','Storm',5,7,['aura',1]],
+  ['krom','Griffe glacée','Icy claw',1,2,null],
+  ['krom','Souffle froid','Cold breath',1,1,['gel',1]],
+  ['krom','Fourrure','Thick fur',2,3,['duo',1]],
+  ['krom','Morsure gelée','Frozen bite',2,3,['clan',1]],
+  ['krom','Blizzard','Blizzard',3,4,['gel',1]],
+  ['krom','Rugissement','Roar',3,3,['aura',1]],
+  ['krom','Avalanche','Avalanche',4,8,null],
+  ['krom','Hiver éternel','Endless winter',5,8,['lien','Roc',2]],
+  ['aurel','Coup de masse','Mace blow',1,2,null],
+  ['aurel','Lueur','Gleam',1,1,['aura',1]],
+  ['aurel','Bouclier d\'aube','Dawn shield',2,2,['lien','Sève',3]],
+  ['aurel','Châtiment','Chastise',2,4,null],
+  ['aurel','Lanterne','Blessed lantern',3,3,['aura',1]],
+  ['aurel','Frappe sacrée','Holy strike',3,5,['duo',1]],
+  ['aurel','Aube nouvelle','New dawn',4,6,['aura',1]],
+  ['aurel','Jugement doré','Golden judgment',5,9,null],
+  ['lune','Lame lunaire','Moon blade',1,2,['duo',1]],
+  ['lune','Esquive','Sidestep',1,1,['gel',1]],
+  ['lune','Aiguise-lames','Whetstone',2,3,['aura',1]],
+  ['lune','Double entaille','Double cut',2,3,null],
+  ['lune','Dague perfide','Sly dagger',3,5,null],
+  ['lune','Danse des lames','Blade dance',3,4,['clan',2]],
+  ['lune','Croissant fendu','Split crescent',4,6,['duo',1]],
+  ['lune','Éclipse','Eclipse',5,7,['lien','Ombre',2]],
+  ['nyx','Griffe d\'ombre','Shadow claw',1,2,null],
+  ['nyx','Aile protectrice','Sheltering wing',1,0,['aura',2]],
+  ['nyx','Morsure','Bite',2,3,['duo',1]],
+  ['nyx','Écailles','Scales',2,2,['gel',1]],
+  ['nyx','Souffle nocturne','Night breath',3,5,null],
+  ['nyx','Couvée','Brood',3,2,['lien','Lune',3]],
+  ['nyx','Vol plané','Glide',4,6,['duo',2]],
+  ['nyx','Souffle du néant','Void breath',5,9,null]
+];
+const CARDS=RAW.map(r=>{
+  const h=HEROES[r[0]];
+  const cost=r[3];
+  return {id:r[0]+':'+r[1],hero:r[0],fr:r[1],en:r[2],cost,pow:r[4],fx:r[5],el:h.el,c:h.c,
+    rarity:cost>=4?3:cost===3?2:1};
+});
+const byId={};CARDS.forEach(c=>{byId[c.id]=c;});
+const MAXC={1:3,2:2,3:1};
+const TURNS=6;
 function shuffle(a,r){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function newGame(A,B,rng){rng=rng||Math.random;
- const sides=[A,B].map(team=>{const t=team.map(k=>{const d=BIBBITS[k],hp=Math.round(d.hp*P.HPX);return{k,nom:d.nom,el:d.el,img:d.img,hp,max:hp,block:0,guard:0,thorns:0,ult:0,ultDone:false};});
-  let res=[];team.forEach((k,i)=>BIBBITS[k].cartes.forEach(c=>{const n=MAXC[c[2]>=4?3:c[2]===3?2:1];for(let j=0;j<n;j++)res.push(mk(i,BIBBITS[k].el,c));}));shuffle(res,rng);
-  const line=[0,1].map(i=>{const c=res.find(c=>c.b===i&&c.cout===1);res.splice(res.indexOf(c),1);return c;});
-  return{team:t,line,reserve:res,lastLine:[],mana:0,saved:0,offer:[],elan:0,chill:0,prev:null};});
- return{sides,round:0,over:false,winner:null,log:[],ev:[],rng};}
-// ---- planification ----
-function startPlanning(g){g.sides.forEach(S=>{S.mana=Math.min(P.MANA_CAP,P.MANA0+g.round)+S.saved;S.saved=0;S.offer=[];const seen=new Set();for(const c of S.reserve){if(S.offer.length>=3)break;if(seen.has(c.key)||count(S,c)>=MAXC[tier(c)])continue;seen.add(c.key);S.offer.push(c);}});}
-function buy(g,s,idx,pos,sac){const S=g.sides[s];if(idx>=0&&S.line.length>=P.CAP){if(sac==null||!S.line[sac]||S.line[sac].ultime)idx=-1;else{const x=S.line.splice(sac,1)[0];S.reserve.push(x);if(pos>sac)pos--;}}S.offer.forEach(c=>S.reserve.splice(S.reserve.indexOf(c),1));
- let c=null;if(idx>=0&&S.offer[idx]&&S.offer[idx].cout<=S.mana&&count(S,S.offer[idx])<MAXC[tier(S.offer[idx])]){c=S.offer[idx];S.mana-=c.cout;S.line.splice(Math.max(0,Math.min(pos,S.line.length)),0,c);}else S.saved=1;
- S.offer.forEach(x=>{if(x!==c)S.reserve.push(x);});S.offer=[];return c;}
-const val=f=>(f.dmg||0)*(f.hits||1)+(f.pierce||0)*1.2+(f.splash||0)*.8+(f.block||0)*.7+(f.ally||0)*.8+(f.shieldAll||0)*1.4+(f.heal||0)*.9+(f.healAll||0)*1.7+(f.elan||0)*.8+(f.chill||0)*.8+(f.guard?2:0)+(f.thorns||0)*1.2+(f.relais||0)*.6+(f.drain?2:0);
-const atk=f=>(f.dmg||0)*(f.hits||1)+(f.pierce||0)+(f.splash||0);
-const def=f=>(f.block||0)+(f.ally||0)+(f.shieldAll||0)*2+(f.guard?4:0)+(f.chill||0)+(f.thorns||0);
-// Nombre minimum d'échanges (transpositions) pour passer de line à ideal.
-function cycleSwaps(line,ideal){const idx=new Map();ideal.forEach((c,i)=>idx.set(c,i));const perm=line.map(c=>idx.get(c)),seen=new Uint8Array(perm.length);let cyc=0;
- for(let i=0;i<perm.length;i++){if(seen[i]||perm[i]==null)continue;let j=i,guard=0;while(j!=null&&!seen[j]&&guard++<20){seen[j]=1;j=perm[j];}cyc++;}return perm.length-cyc;}
-// Réordonne vers ideal en dépensant d'abord les échanges gratuits, puis 1 mana chacun, sans descendre sous reserve.
-function reorderBudget(S,ideal,reserve,priority){let used=0,paid=0;const line=S.line,pri=(priority||[]).slice();let guard=0;
- while(guard++<12){let i=-1;for(const p of pri)if(line[p]!==ideal[p]){i=p;break;}if(i<0)i=line.findIndex((c,idx)=>c!==ideal[idx]);if(i<0)break;
-  const j=line.indexOf(ideal[i]);if(j<0||j===i)break;const cost=used>=P.SWAP_FREE?P.SWAP_COST:0;if(S.mana-cost<reserve||cost>S.mana)break;
-  [line[i],line[j]]=[line[j],line[i]];S.mana-=cost;used++;if(cost)paid++;}
- S.swapUsed=used;S.swapPaid=paid;return used;}
-// IA : défense en face des grosses attaques, dans la limite des échanges, puis achat.
-function aiPlan(g,s){const S=g.sides[s],O=g.sides[1-s],foe=O.lastLine.length?O.lastLine:O.line;
- const L=S.line.slice().sort((a,b)=>def(b.fx)-def(a.fx));const slots=[...Array(L.length).keys()].sort((a,b)=>atk((foe[b]||{fx:{}}).fx)-atk((foe[a]||{fx:{}}).fx));
- const nd=L.filter(c=>def(c.fx)>atk(c.fx)).length,out=Array(L.length);slots.slice(0,nd).forEach((sl,k)=>out[sl]=L[k]);let r=L.slice(nd);for(let i=0;i<out.length;i++)if(!out[i])out[i]=r.shift();
- let best=-1,bv=-1;S.offer.forEach((c,i)=>{if(c.cout<=S.mana){const v=val(c.fx)/(1+c.cout*.15);if(v>bv){bv=v;best=i;}}});
- const keep=best>=0?S.offer[best]:null,extra=Math.max(0,cycleSwaps(S.line,out)-P.SWAP_FREE)*P.SWAP_COST;
- reorderBudget(S,out,keep&&extra>0&&S.mana-extra<keep.cout?keep.cout:0,slots);
- best=-1;bv=-1;S.offer.forEach((c,i)=>{if(c.cout<=S.mana){const v=val(c.fx)/(1+c.cout*.15);if(v>bv){bv=v;best=i;}}});
- if(best>=0&&S.offer[best].cout<S.mana&&S.offer.some(c=>c.cout===S.mana+1)&&g.rng()<.3)best=-1;
- const c=best>=0?S.offer[best]:null;let pos=S.line.length;if(c){if(def(c.fx)>atk(c.fx)){const sl=slots.find(x=>x<=S.line.length&&def((S.line[x]||{fx:{}}).fx)<def(c.fx));pos=sl==null?S.line.length:sl;}else{for(let i=0;i<=S.line.length;i++){const p=S.line[i-1];if(p&&p.b!==c.b&&(c.fx.relais||g.rng()<.4)){pos=i;break;}}}}
- let sac=null;if(c&&S.line.length>=P.CAP){let mv=1e9;S.line.forEach((x,i)=>{if(!x.ultime){const v=val(x.fx);if(v<mv){mv=v;sac=i;}}});if(val(c.fx)<=mv*1.1)best=-1;else if(pos>S.line.length-1)pos=S.line.length;}
- if(!S.swapUsed){S.swapUsed=0;S.swapPaid=0;}
- buy(g,s,best,pos,sac);}
-// ---- combat ----
-const ev=(g,e)=>g.ev.push(e),alive=T=>T.filter(t=>t.hp>0);
-function checkEnd(g){for(let s=0;s<2;s++)if(!alive(g.sides[s].team).length){g.over=true;g.winner=1-s;g.log.push(s===1?'🏆 Victoire !':'💀 Défaite…');ev(g,{t:'end',w:1-s});return true;}return false;}
-function hurt(g,s,tg,n,pierce,src){if(n<=0||tg.hp<=0)return 0;const T=g.sides[s].team;let ab=0;if(!pierce){ab=Math.min(tg.block,n);tg.block-=ab;}const d=Math.min(tg.hp,n-ab);tg.hp-=d;
- if(!tg.ultDone)tg.ult=Math.min(P.ULT,tg.ult+d);ev(g,{t:'dmg',s,i:T.indexOf(tg),n:d,blocked:ab,hp:tg.hp,block:tg.block,ult:tg.ult,pierce:!!pierce,src});if(tg.hp<=0){ev(g,{t:'ko',s,i:T.indexOf(tg)});g.log.push('  ☠ '+tg.nom+' est K.-O.');}return d;}
-function target(O,oppCard){const A=alive(O.team);if(!A.length)return null;const gd=A.find(t=>t.guard);if(gd)return gd;if(oppCard&&O.team[oppCard.b].hp>0)return O.team[oppCard.b];return A.sort((a,b)=>a.hp/a.max-b.hp/b.max)[0];}
-function play(g,s,c,opp){const S=g.sides[s],O=g.sides[1-s],T=S.team,me=T[c.b];
- if(me.hp<=0){ev(g,{t:'fizzle',s,c});g.log.push('  '+c.nom+' ne joue pas ('+me.nom+' est K.-O.)');S.prev=c;return;}
- const fx=Object.assign({},c.fx),tags=[];const ally=S.prev&&S.prev.b!==c.b&&T[S.prev.b].hp>0&&S.prev.el!==undefined;
- if(ally){if(fx.relais){fx.dmg=(fx.dmg||0)+fx.relais;tags.push('Relais +'+fx.relais);}
-  if(S.prev.el!==c.el)for(const k of COMBOS)if((k[0]===S.prev.el&&k[1]===c.el)||(k[1]===S.prev.el&&k[0]===c.el)){for(const x in k[3])fx[x]=(fx[x]||0)+k[3][x];tags.push('Combo '+k[2]);break;}}
- if(fx.relais&&!ally)delete fx.relais;
- if(S.elan&&(fx.dmg||fx.pierce)){if(fx.dmg)fx.dmg+=S.elan;else fx.pierce+=S.elan;tags.push('Élan +'+S.elan);ev(g,{t:'elanUse',s});S.elan=0;}
- if(S.chill&&(fx.dmg||fx.pierce)){const k=S.chill;if(fx.dmg)fx.dmg=Math.max(0,fx.dmg-k);else fx.pierce=Math.max(0,fx.pierce-k);tags.push('Gelé −'+k);ev(g,{t:'chillUse',s});S.chill=0;}
- ev(g,{t:'play',s,c,i:c.b,tags,fx});g.log.push((s===0?'Toi':'IA')+' · '+me.nom+' : « '+c.nom+' »'+(tags.length?' ['+tags.join(', ')+']':''));
- const mate=T.find((t,j)=>j!==c.b&&t.hp>0)||me;
- if(fx.guard){me.guard=1;ev(g,{t:'guard',s,i:c.b});}
- if(fx.block){me.block+=fx.block;ev(g,{t:'block',s,i:c.b,n:fx.block,v:me.block});}
- if(fx.ally){mate.block+=fx.ally;ev(g,{t:'block',s,i:T.indexOf(mate),n:fx.ally,v:mate.block,from:c.b});}
- if(fx.shieldAll)alive(T).forEach(t=>{t.block+=fx.shieldAll;ev(g,{t:'block',s,i:T.indexOf(t),n:fx.shieldAll,v:t.block});});
- if(fx.thorns){me.thorns+=fx.thorns;ev(g,{t:'thorns',s,i:c.b,n:fx.thorns});}
- const heal=(t,n)=>{const h=Math.min(n,t.max-t.hp);t.hp+=h;ev(g,{t:'heal',s,i:T.indexOf(t),n:h,hp:t.hp});};
- if(fx.heal)heal(alive(T).sort((a,b)=>a.hp/a.max-b.hp/b.max)[0],fx.heal);
- if(fx.healAll)alive(T).forEach(t=>heal(t,fx.healAll));
- if(fx.elan){S.elan+=fx.elan;ev(g,{t:'elan',s,n:S.elan});}
- if(fx.chill){O.chill+=fx.chill;ev(g,{t:'chill',s:1-s,n:O.chill});}
- const hit=(n,pierce)=>{const tg=target(O,opp);if(!tg)return;ev(g,{t:'lunge',s,i:c.b,ts:1-s,ti:O.team.indexOf(tg)});const d=hurt(g,1-s,tg,n,pierce,c.b);if(fx.drain&&d>0)heal(me,Math.ceil(d/2));if(tg.thorns&&me.hp>0)hurt(g,s,me,tg.thorns,true);return tg;};
- let last=null;for(let h=0;h<(fx.hits||(fx.dmg?1:0));h++){last=hit(fx.dmg,false)||last;if(g.over||checkEnd(g))return;}
- if(fx.pierce){last=hit(fx.pierce,true)||last;if(checkEnd(g))return;}
- if(fx.splash){const tg=alive(O.team).find(t=>t!==last)||null;if(tg){hurt(g,1-s,tg,fx.splash,false,c.b);if(checkEnd(g))return;}}
- S.prev=c;}
-function playRound(g){if(g.over)return;g.round++;g.ev=[];g.log.push('— Manche '+g.round+' —');
- g.sides.forEach(S=>{S.prev=null;S.lastLine=S.line.slice();});ev(g,{t:'round',r:g.round});
- const n=Math.max(g.sides[0].line.length,g.sides[1].line.length);
- for(let i=0;i<n&&!g.over;i++){const c=g.sides.map(S=>S.line[i]||null);ev(g,{t:'slot',i,c});
-  let ord=[0,1].filter(s=>c[s]);if(ord.length===2){const d=c[0].cout-c[1].cout;ord=d<0?[0,1]:d>0?[1,0]:((g.round+i)%2?[0,1]:[1,0]);}
-  for(const s of ord){if(g.over)break;play(g,s,c[s],c[1-s]);}ev(g,{t:'slotEnd',i});}
- if(!g.over&&g.round>=P.BRUME){const n=P.BK*(g.round-P.BRUME+1);ev(g,{t:'brume',n});g.log.push('☁ Brume du Fané : '+n+' dégâts perçants à chaque Bibbit.');
-  for(const s of (g.round%2?[0,1]:[1,0]))for(const t of alive(g.sides[s].team)){hurt(g,s,t,n,true,-1);if(checkEnd(g))break;}}
- // fin de manche : boucliers, provocation, élan, gel s'effacent ; l'Ultime chargé entre en tête de ligne ; les Ultimes joués partent.
- g.sides.forEach((S,s)=>{S.line=S.line.filter(c=>!c.ultime);S.elan=0;S.chill=0;S.team.forEach((t,i)=>{t.block=0;t.guard=0;t.thorns=0;
-  if(!g.over&&t.hp>0&&!t.ultDone&&t.ult>=P.ULT){t.ultDone=true;const u=BIBBITS[t.k].ult;S.line.unshift(mk(i,t.el,[u[0],u[1],0],{ultime:true}));ev(g,{t:'ult',s,i,nom:u[0]});g.log.push('✨ '+t.nom+' : Ultime « '+u[0]+' » prêt pour la prochaine manche !');}});});
- ev(g,{t:'roundEnd'});}
-function fxText(f){const p=[];if(f.dmg)p.push('Attaque '+(f.hits?f.hits+' × ':'')+f.dmg);if(f.pierce)p.push('Perce '+f.pierce+' (ignore le bouclier)');if(f.splash)p.push('Éclat '+f.splash+' sur l\'autre ennemi');
- if(f.block)p.push('Bouclier '+f.block+' sur soi');if(f.ally)p.push('Protège l\'allié : bouclier '+f.ally);if(f.shieldAll)p.push('Bouclier '+f.shieldAll+' à toute l\'équipe');if(f.guard)p.push('Provocation : attire toutes les attaques ennemies jusqu\'à la fin de la manche');
- if(f.thorns)p.push('Épines '+f.thorns+' : renvoie '+f.thorns+' à chaque coup reçu');if(f.heal)p.push('Soin '+f.heal+' à l\'allié le plus blessé');if(f.healAll)p.push('Soin '+f.healAll+' à toute l\'équipe');
- if(f.elan)p.push('Élan '+f.elan+' : +'+f.elan+' à la prochaine attaque alliée');if(f.chill)p.push('Gel '+f.chill+' : −'+f.chill+' à la prochaine attaque ennemie');if(f.relais)p.push('Relais +'+f.relais+' si la carte d\'avant vient de ton allié');if(f.drain)p.push('Vol de vie : se soigne de la moitié des dégâts');return p.join(' · ');}
-return{tier,MAXC,TIERN,count,BIBBITS,COMBOS,P,newGame,startPlanning,buy,aiPlan,playRound,fxText,shuffle,val,atk,def,cycleSwaps,reorderBudget};});
+function rarityOf(c){return c.rarity;}
+function fxText(c,lang){
+  const fx=c.fx; if(!fx) return lang==='en'?'Strike':'Frappe';
+  const en=lang==='en';
+  if(fx[0]==='duo') return (en?'+'+fx[1]+' with an ally':'+'+fx[1]+' avec un allié');
+  if(fx[0]==='aura') return (en?'Previous +'+fx[1]:'Carte d\'avant +'+fx[1]);
+  if(fx[0]==='lien') return (en?'+'+fx[2]+' with '+fx[1]:'+'+fx[2]+' avec '+fx[1]);
+  if(fx[0]==='gel') return (en?'−'+fx[1]+' on strongest foe':'−'+fx[1]+' sur le plus fort');
+  if(fx[0]==='clan') return (en?'+'+fx[1]+' if another '+c.el:'+'+fx[1]+' si autre '+c.el);
+  return '';
+}
+// Final power of each card in a line. Mutates nothing.
+function powers(line,foes){
+  const p=line.map(c=>c.pow);
+  line.forEach((c,i)=>{
+    const fx=c.fx; if(!fx) return;
+    const allies=line.filter((_,j)=>j!==i);
+    if(fx[0]==='duo'&&allies.length) p[i]+=fx[1];
+    if(fx[0]==='lien'&&allies.some(a=>a.el===fx[1])) p[i]+=fx[2];
+    if(fx[0]==='clan'&&allies.some(a=>a.el===c.el)) p[i]+=fx[1];
+    if(fx[0]==='aura'&&i>0) p[i-1]+=fx[1];
+  });
+  let gel=(foes||[]).reduce((s,c)=>s+(c.fx&&c.fx[0]==='gel'?c.fx[1]:0),0);
+  while(gel>0&&p.length){let k=0;for(let i=1;i<p.length;i++)if(p[i]>p[k])k=i;if(p[k]<=0)break;p[k]--;gel--;}
+  return p.map(n=>Math.max(0,n));
+}
+function total(line,foes){return powers(line,foes).reduce((s,n)=>s+n,0);}
+function starter(heroes){
+  const pool=CARDS.filter(c=>heroes.includes(c.hero));
+  const take=(pred,n)=>pool.filter(pred).slice(0,n);
+  const deck=[].concat(take(c=>c.cost===1,4),take(c=>c.cost===2,4),take(c=>c.cost===3,2),take(c=>c.cost===4,1),take(c=>c.cost===5,1));
+  return deck.slice(0,12).map(c=>Object.assign({uid:c.id+'#'+Math.random().toString(36).slice(2,7)},c));
+}
+function freshSide(heroes,rng){
+  const deck=shuffle(starter(heroes).map(c=>Object.assign({},c)),rng);
+  const hand=deck.splice(0,4);
+  return {heroes,deck,hand,line:[],played:null};
+}
+function create(mine,opp,rng){
+  rng=rng||Math.random;
+  let uid=1; const stamp=arr=>arr.map(c=>Object.assign({},c,{uid:uid++}));
+  const mk=heroes=>{
+    const base=starter(heroes);
+    const deck=shuffle(base.map(c=>Object.assign({},c)),rng);
+    deck.forEach(c=>{c.uid=uid++;});
+    return {heroes,deck,hand:deck.splice(0,4),line:[]};
+  };
+  return {turn:1,over:false,winner:null,rng,you:mk(mine),foe:mk(opp),last:null};
+}
+function energy(g){return g.turn;}
+function legal(side,en){return side.hand.filter(c=>c.cost<=en);}
+function score(g){return [total(g.you.line,g.foe.line),total(g.foe.line,g.you.line)];}
+// One-step lookahead on the visible line. Does not read the opponent's hand.
+function aiChoose(g,seat){
+  const me=seat==='you'?g.you:g.foe, foe=seat==='you'?g.foe:g.you;
+  const opts=legal(me,energy(g));
+  let best=null,bv=-1e9;
+  const consider=card=>{
+    const my=me.line.concat(card?[card]:[]);
+    const s=total(my,foe.line)-total(foe.line,my);
+    const waste=card?0:-2; // passing spends the turn
+    const v=s+waste+(card?card.pow*0.05:0)+g.rng()*0.35;
+    if(v>bv){bv=v;best=card||null;}
+  };
+  consider(null);
+  opts.forEach(consider);
+  return best;
+}
+function commit(g,yourCard,foeCard){
+  const play=(side,card)=>{
+    if(!card) return null;
+    const i=side.hand.findIndex(c=>c.uid===card.uid);
+    if(i<0||card.cost>energy(g)) return null;
+    side.hand.splice(i,1);
+    side.line.push(card);
+    return card;
+  };
+  const a=play(g.you,yourCard), b=play(g.foe,foeCard);
+  if(g.you.deck.length) g.you.hand.push(g.you.deck.shift());
+  if(g.foe.deck.length) g.foe.hand.push(g.foe.deck.shift());
+  const sc=score(g);
+  g.last={you:a,foe:b,score:sc.slice(),turn:g.turn};
+  if(g.turn>=TURNS){g.over=true;g.winner=sc[0]>sc[1]?0:sc[1]>sc[0]?1:-1;}
+  else g.turn++;
+  return g.last;
+}
+function playTurn(g,yourCard){
+  const foe=aiChoose(g,'foe');
+  return commit(g,yourCard,foe);
+}
+// Build a legal custom deck: ids with counts, heroes length 2.
+function validateDeck(heroes,counts){
+  const err=[];
+  if(!heroes||heroes.length!==2) err.push('heroes');
+  let n=0;
+  Object.keys(counts||{}).forEach(id=>{
+    const c=byId[id]; if(!c||heroes.indexOf(c.hero)<0){err.push(id);return;}
+    const k=counts[id]|0; if(k<0||k>MAXC[c.rarity]) err.push(id);
+    n+=k;
+  });
+  if(n!==12) err.push('size');
+  return err;
+}
+function deckFromCounts(heroes,counts,rng){
+  const list=[];
+  Object.keys(counts).forEach(id=>{
+    const c=byId[id]; const k=counts[id]|0;
+    for(let i=0;i<k;i++) list.push(Object.assign({},c));
+  });
+  return list;
+}
+function sim(N,rng){
+  rng=rng||Math.random;
+  const keys=Object.keys(HEROES), w={},n={}; let draws=0; keys.forEach(k=>{w[k]=0;n[k]=0;});
+  let rounds=0;
+  for(let i=0;i<N;i++){
+    const pick=()=>keys[(rng()*keys.length)|0];
+    let a=[pick(),pick()]; if(a[0]===a[1]) a[1]=keys[(keys.indexOf(a[0])+1)%keys.length];
+    let b=[pick(),pick()]; if(b[0]===b[1]) b[1]=keys[(keys.indexOf(b[0])+3)%keys.length];
+    const g=create(a,b,rng);
+    while(!g.over){const mine=aiChoose(g,'you'); playTurn(g,mine);} 
+    rounds+=TURNS;
+    if(g.winner<0){draws++;continue;}
+    const W=g.winner===0?a:b, L=g.winner===0?b:a;
+    new Set(W).forEach(k=>{w[k]++;n[k]++;});
+    new Set(L).forEach(k=>{n[k]++;});
+  }
+  return {N,draws,rates:keys.map(k=>({k,wr:n[k]?(100*w[k]/n[k]):0,n:n[k]}))};
+}
+return {HEROES,CARDS,byId,MAXC,TURNS,fxText,powers,total,starter,create,energy,legal,score,aiChoose,commit,playTurn,validateDeck,deckFromCounts,sim,rarityOf};
+});
